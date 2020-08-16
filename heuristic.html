@@ -174,8 +174,96 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="heuristic">
-<h1>Heuristic<a class="headerlink" href="#heuristic" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-samplesizelib.linear.heuristic">
+<span id="heuristic"></span><h1>Heuristic<a class="headerlink" href="#module-samplesizelib.linear.heuristic" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-samplesizelib.linear.heuristic" title="samplesizelib.linear.heuristic"><code class="xref py py-mod docutils literal notranslate"><span class="pre">samplesizelib.linear.heuristic</span></code></a> contains classes:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#samplesizelib.linear.heuristic.CrossValidationEstimator" title="samplesizelib.linear.heuristic.CrossValidationEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">samplesizelib.linear.heuristic.CrossValidationEstimator</span></code></a></p></li>
+<li><p><a class="reference internal" href="#samplesizelib.linear.heuristic.BootstrapEstimator" title="samplesizelib.linear.heuristic.BootstrapEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">samplesizelib.linear.heuristic.BootstrapEstimator</span></code></a></p></li>
+</ul>
+<dl class="py class">
+<dt id="samplesizelib.linear.heuristic.BootstrapEstimator">
+<em class="property">class </em><code class="sig-prename descclassname">samplesizelib.linear.heuristic.</code><code class="sig-name descname">BootstrapEstimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">statmodel</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwards</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/heuristic.html#BootstrapEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.heuristic.BootstrapEstimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of Bootstrap Method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statmodel</strong> (<em>RegressionModel</em><em> or </em><em>LogisticModel</em>) – the machine learning algorithm</p></li>
+<li><p><strong>averaging</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>begin</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>multiprocess</strong> (<em>bool</em>) – to do</p></li>
+<li><p><strong>progressbar</strong> (<em>bool</em>) – to do</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="samplesizelib.linear.heuristic.BootstrapEstimator.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">features</span></em>, <em class="sig-param"><span class="n">target</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/heuristic.html#BootstrapEstimator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.heuristic.BootstrapEstimator.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns sample size prediction for the given dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>array.</em>) – The tensor of shape
+<cite>num_elements</cite> <span class="math notranslate nohighlight">\(\times\)</span> <cite>num_feature</cite>.</p></li>
+<li><p><strong>target</strong> (<em>array.</em>) – The tensor of shape <cite>num_elements</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sample size estimation for the given dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="samplesizelib.linear.heuristic.CrossValidationEstimator">
+<em class="property">class </em><code class="sig-prename descclassname">samplesizelib.linear.heuristic.</code><code class="sig-name descname">CrossValidationEstimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">statmodel</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwards</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/heuristic.html#CrossValidationEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.heuristic.CrossValidationEstimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of Cross Validation Method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statmodel</strong> (<em>RegressionModel</em><em> or </em><em>LogisticModel</em>) – the machine learning algorithm</p></li>
+<li><p><strong>averaging</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>begin</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>test_size</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>multiprocess</strong> (<em>bool</em>) – to do</p></li>
+<li><p><strong>progressbar</strong> (<em>bool</em>) – to do</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="samplesizelib.linear.heuristic.CrossValidationEstimator.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">features</span></em>, <em class="sig-param"><span class="n">target</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/heuristic.html#CrossValidationEstimator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.heuristic.CrossValidationEstimator.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns sample size prediction for the given dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>array.</em>) – The tensor of shape
+<cite>num_elements</cite> <span class="math notranslate nohighlight">\(\times\)</span> <cite>num_feature</cite>.</p></li>
+<li><p><strong>target</strong> (<em>array.</em>) – The tensor of shape <cite>num_elements</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sample size estimation for the given dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
