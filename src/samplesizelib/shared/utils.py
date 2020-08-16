@@ -25,13 +25,15 @@ class Dataset(object):
         return len(self._X)
 
 
-    def sample(self, m, duplications=True):
+    def sample(self, m=None, duplications=True):
         r"""
         :param m: subset size. must be greater than number of feature
         :type m: int
         :param duplications: to do
         :type duplications: bool
         """
+        if m is None:
+            m = self.__len__()
         if m <= self.n:
             raise ValueError(
                 "The m={} value must be greater than number of feature={}".format(
