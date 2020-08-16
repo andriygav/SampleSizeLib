@@ -22,12 +22,9 @@ Welcome to Sample Size Lib!
    :maxdepth: 2
    :caption: Packages:
 
-   .. toctree::
-      :maxdepth: 1
-      :caption: Linear:
-      
-      statistical.rst
-      bayesian.rst
+   linear.rst
+
+
 
 Indices and tables
 ==================
