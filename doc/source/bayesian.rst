@@ -2,5 +2,5 @@
 Bayesian
 ********
 
-.. automodule:: samplesizelib.bayesian.statistical
+.. automodule:: samplesizelib.linear.bayesian
     :members:
