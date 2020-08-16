@@ -1,10 +1,10 @@
-.. MixtureLib documentation master file, created by
+.. SampleSizeLib documentation master file, created by
    sphinx-quickstart on Fri Mar 20 22:58:28 2020.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Mixture Lib!
-=======================
+Welcome to Sample Size Lib!
+===========================
 
 .. toctree::
    :maxdepth: 1
