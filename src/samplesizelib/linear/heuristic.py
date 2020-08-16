@@ -107,7 +107,10 @@ class CrossValidationEstimator(SampleSizeEstimator):
 
         self.dataset = None
 
-    def RS(self, dataset):
+    def _RS(self, dataset):
+        r"""
+        Return ...
+        """
         X_train, X_test, y_train, y_test = dataset.train_test_split(self.test_size)
 
         w_hat = self.statmodel(y_train, X_train).fit()
@@ -117,9 +120,12 @@ class CrossValidationEstimator(SampleSizeEstimator):
         return S_train - S_test
 
     def _score_subsample(self, m):
+        r"""
+        Return ...
+        """
         X_m, y_m = self.dataset.sample(m)
         dataset_m = Dataset(X_m, y_m)
-        return self.RS(dataset_m)
+        return self._RS(dataset_m)
 
     def forward(self, features, target):
         r"""
