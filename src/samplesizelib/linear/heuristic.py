@@ -397,17 +397,3 @@ class BootstrapEstimator(SampleSizeEstimator):
                 'S': np.array(list_of_S),
                 'm': np.array(subset_sizes),
                }
-
-
-
-
-
-
-
-
-
-
-
-
-
-

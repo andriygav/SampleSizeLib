@@ -4,7 +4,7 @@ Changelog
 
 Changes:
 
-v0.0.2 (futuru)
+v0.0.2 (future)
   - add heuristic methods
   - add dataset type with subsample generator
 
