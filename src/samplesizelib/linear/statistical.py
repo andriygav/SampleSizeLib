@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-The :mod:`samplesizelib.linear.statistical` contains classes:
+The :mod:`samplesizelib.linear.statistical` contains next classes:
+
 - :class:`samplesizelib.linear.statistical.LagrangeEstimator`
+- :class:`samplesizelib.linear.statistical.LikelihoodRatioEstimator`
+- :class:`samplesizelib.linear.statistical.WaldEstimator`
 """
 from __future__ import print_function
 
