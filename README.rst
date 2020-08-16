@@ -16,6 +16,19 @@ SampleSize Lib
     :target: https://andriygav.github.io/SampleSizeLib/
     :alt: Build status
 
+Basic information
+=================
+
+Implementation code for a sample size estimation task. The `source code <https://github.com/andriygav/SampleSizeLib/tree/master/src>`_ for the problem of the sample size estimation for linear models.
+
+
+All information about this project can be found in the `documentation <https://andriygav.github.io/SampleSizeLib/>`_.
+
+Requirements and Installation
+=============================
+A simple instruction of installation using pip is provided near the `source code <https://github.com/andriygav/SampleSizeLib/tree/master/src>`_.
+
+More information about installation can be found in documentation `installation <https://andriygav.github.io/SampleSizeLib/installation.html>`_ page.
 
 Changelog
 ==============
