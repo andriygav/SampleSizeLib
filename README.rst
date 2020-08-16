@@ -30,6 +30,11 @@ A simple instruction of installation using pip is provided near the `source code
 
 More information about installation can be found in documentation `installation <https://andriygav.github.io/SampleSizeLib/installation.html>`_ page.
 
+Example of use
+==============
+A simple examples of module usage can be found in documentation `example <https://andriygav.github.io/SampleSizeLib/example.html>`_ page.
+
+
 Changelog
 ==============
 0.0.0 --- initial commit.
