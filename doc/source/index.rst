@@ -11,6 +11,7 @@ Welcome to Sample Size Lib!
    :caption: Main Info:
    
    info.rst
+   changelog.rst
 
 .. toctree::
    :maxdepth: 1
