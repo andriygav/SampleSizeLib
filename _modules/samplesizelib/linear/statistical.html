@@ -173,7 +173,8 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">sps</span>
-<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span> <span class="k">as</span> <span class="n">minimize</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="kn">import</span> <span class="n">fractional_matrix_power</span>
 
 <span class="kn">from</span> <span class="nn">..shared.estimator</span> <span class="kn">import</span> <span class="n">SampleSizeEstimator</span>
 <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">RegressionModel</span><span class="p">,</span> <span class="n">LogisticModel</span>
@@ -291,7 +292,6 @@
         <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statmodel</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
 
         <span class="n">w_hat</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-
         <span class="n">mu</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">w_hat</span><span class="p">)</span>
 
 
@@ -303,7 +303,7 @@
 
         <span class="n">wu0</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="n">ind_u</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span>
 
-        <span class="n">wv_hat</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fix_variables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_negative_func</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">loglike_fixed</span><span class="p">),</span> <span class="n">wu0</span><span class="p">,</span> <span class="n">ind_u</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ind_v</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+        <span class="n">wv_hat</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fix_variables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_negative_func</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">loglike_fixed</span><span class="p">),</span> <span class="n">wu0</span><span class="p">,</span> <span class="n">ind_u</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ind_u</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
                      <span class="n">jac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_variables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_negative_func</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">score_fixed</span><span class="p">),</span> <span class="n">wu0</span><span class="p">,</span> <span class="n">ind_u</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
                      <span class="n">hess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_variables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_negative_func</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">hessian_fixed</span><span class="p">),</span> <span class="n">wu0</span><span class="p">,</span> <span class="n">ind_u</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
                      <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Newton-CG&#39;</span><span class="p">)[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
@@ -328,6 +328,314 @@
         
         <span class="n">m_star</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">gamma</span><span class="o">/</span><span class="n">gamma_0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;m*&#39;</span><span class="p">:</span> <span class="n">m_star</span><span class="p">}</span></div></div>
+
+<div class="viewcode-block" id="LikelihoodRatioEstimator"><a class="viewcode-back" href="../../../statistical.html#samplesizelib.linear.statistical.LikelihoodRatioEstimator">[docs]</a><span class="k">class</span> <span class="nc">LikelihoodRatioEstimator</span><span class="p">(</span><span class="n">SampleSizeEstimator</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Description of Likelihood Ratio Method</span>
+
+<span class="sd">    :param statmodel: the machine learning algorithm</span>
+<span class="sd">    :type statmodel: RegressionModel or LogisticModel</span>
+<span class="sd">    :param ind_u: to do</span>
+<span class="sd">    :type ind_u: numpy.ndarray</span>
+<span class="sd">    :param epsilon: to do</span>
+<span class="sd">    :type epsilon: float</span>
+<span class="sd">    :param alpha: to do</span>
+<span class="sd">    :type alpha: float</span>
+<span class="sd">    :param beta: to do</span>
+<span class="sd">    :type beta: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statmodel</span><span class="p">,</span> <span class="o">**</span><span class="n">kwards</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Constructor method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statmodel</span> <span class="o">=</span> <span class="n">statmodel</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ind_u</span> <span class="o">=</span> <span class="n">kwards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ind_u&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ind_u</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ind_u</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The ind_u should be numpy.ndarray but get </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ind_u</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">kwards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;epsilon&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The epsilon must be positive value but get </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The alpha must be between 0 and 1 but get </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">kwards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The beta must be between 0 and 1 but get </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_fix_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">ind_1</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ind_2</span> <span class="o">=</span> <span class="p">(</span><span class="n">ind_1</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">lambda</span> <span class="n">x2</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stitch_vectors</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">ind_1</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="k">lambda</span> <span class="n">x2</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stitch_vectors</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">ind_1</span><span class="p">))[</span><span class="n">ind_2</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">lambda</span> <span class="n">x2</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stitch_vectors</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">ind_1</span><span class="p">))[</span><span class="n">ind_2</span><span class="p">][:,</span><span class="n">ind_2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;dim must be between 0 and 2 but get </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_negative_func</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">negative_func_fx</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="o">-</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">negative_func_f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">negative_func_fx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">negative_func_f</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_stitch_vectors</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">ind_1</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ind_1</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">ind_1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x1</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">ind_1</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="n">x2</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_gamma</span><span class="p">(</span><span class="n">ind_u</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">ind_u</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sps</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">-</span> <span class="n">sps</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">))</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)[</span><span class="s1">&#39;x&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">gamma</span>
+
+<div class="viewcode-block" id="LikelihoodRatioEstimator.forward"><a class="viewcode-back" href="../../../statistical.html#samplesizelib.linear.statistical.LikelihoodRatioEstimator.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns sample size prediction for the given dataset.</span>
+<span class="sd">        </span>
+<span class="sd">        :param features: The tensor of shape</span>
+<span class="sd">            `num_elements` :math:`\times` `num_feature`.</span>
+<span class="sd">        :type features: array.</span>
+<span class="sd">        :param target: The tensor of shape `num_elements`.</span>
+<span class="sd">        :type target: array.</span>
+<span class="sd">        </span>
+<span class="sd">        :return: sample size estimation for the given dataset.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span> <span class="n">features</span>
+        <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ind_u</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ind_u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">n</span><span class="o">//</span><span class="mi">2</span><span class="p">)])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ind_u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ind_u</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statmodel</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+        <span class="n">w_hat</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+        <span class="n">wu0</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="n">ind_u</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span>
+        <span class="n">wv_hat</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fix_variables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_negative_func</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">loglike_fixed</span><span class="p">),</span> <span class="n">wu0</span><span class="p">,</span> <span class="n">ind_u</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ind_u</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+                     <span class="n">jac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_variables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_negative_func</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">score_fixed</span><span class="p">),</span> <span class="n">wu0</span><span class="p">,</span> <span class="n">ind_u</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                     <span class="n">hess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_variables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_negative_func</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">hessian_fixed</span><span class="p">),</span> <span class="n">wu0</span><span class="p">,</span> <span class="n">ind_u</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                     <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Newton-CG&#39;</span><span class="p">)[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+
+        <span class="n">w_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stitch_vectors</span><span class="p">(</span><span class="n">wu0</span><span class="p">,</span> <span class="n">wv_hat</span><span class="p">,</span> <span class="n">ind_u</span><span class="p">)</span>
+
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w_hat</span>
+        <span class="n">theta_star</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">w_0</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">))))</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="mf">1.</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="mf">1e-30</span><span class="p">)</span>
+            <span class="n">grad_b</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">theta</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">())</span><span class="o">**</span><span class="mi">2</span>
+            <span class="n">b</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+            <span class="n">grad_b</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+
+        <span class="n">delta_star</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">a</span><span class="p">)</span><span class="o">*</span><span class="p">((</span><span class="n">theta</span><span class="o">-</span><span class="n">theta_star</span><span class="p">)</span><span class="o">*</span><span class="n">grad_b</span><span class="p">(</span><span class="n">w_hat</span><span class="p">)</span> <span class="o">-</span> <span class="n">b</span><span class="p">(</span><span class="n">w_hat</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span><span class="p">(</span><span class="n">w_0</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+        <span class="n">gamma_star</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_gamma</span><span class="p">(</span><span class="n">ind_u</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span>
+
+        <span class="n">m_star</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">gamma_star</span><span class="o">/</span><span class="n">delta_star</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;m*&#39;</span><span class="p">:</span> <span class="n">m_star</span><span class="p">}</span></div></div>
+
+<div class="viewcode-block" id="WaldEstimator"><a class="viewcode-back" href="../../../statistical.html#samplesizelib.linear.statistical.WaldEstimator">[docs]</a><span class="k">class</span> <span class="nc">WaldEstimator</span><span class="p">(</span><span class="n">SampleSizeEstimator</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Description of Wald Method</span>
+
+<span class="sd">    :param statmodel: the machine learning algorithm</span>
+<span class="sd">    :type statmodel: RegressionModel or LogisticModel</span>
+<span class="sd">    :param ind_u: to do</span>
+<span class="sd">    :type ind_u: numpy.ndarray</span>
+<span class="sd">    :param epsilon: to do</span>
+<span class="sd">    :type epsilon: float</span>
+<span class="sd">    :param alpha: to do</span>
+<span class="sd">    :type alpha: float</span>
+<span class="sd">    :param beta: to do</span>
+<span class="sd">    :type beta: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statmodel</span><span class="p">,</span> <span class="o">**</span><span class="n">kwards</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Constructor method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statmodel</span> <span class="o">=</span> <span class="n">statmodel</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ind_u</span> <span class="o">=</span> <span class="n">kwards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ind_u&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ind_u</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ind_u</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The ind_u should be numpy.ndarray but get </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ind_u</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">=</span> <span class="n">kwards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;epsilon&#39;</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The epsilon must be positive value but get </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The alpha must be between 0 and 1 but get </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">kwards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The beta must be between 0 and 1 but get </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_fix_alpha</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">Sigma_star</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="n">Sigma</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">Sigma_12</span> <span class="o">=</span> <span class="n">fractional_matrix_power</span><span class="p">(</span><span class="n">Sigma</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">Sigma_12</span><span class="o">.</span><span class="n">T</span> <span class="o">@</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma_star</span><span class="p">)</span> <span class="o">@</span> <span class="n">Sigma_12</span>
+
+        <span class="n">lambdas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">matrix</span><span class="p">))</span>
+        <span class="n">factorials</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">8</span><span class="p">]</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">factorials</span><span class="p">[</span><span class="n">r</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">lambdas</span><span class="o">**</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]])</span>
+
+        <span class="n">t1</span> <span class="o">=</span> <span class="mi">4</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">k</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">t2</span> <span class="o">=</span> <span class="n">k</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">chi_quantile</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">t1</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">a_new</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">b_new</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">s1</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">s2</span> <span class="o">=</span> <span class="mi">3</span><span class="o">*</span><span class="n">t2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">alpha_star</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sps</span><span class="o">.</span><span class="n">invgamma</span><span class="p">(</span><span class="n">a_new</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">b_new</span><span class="p">)</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">chi_quantile</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">t2</span> <span class="o">&lt;</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">a_new</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">b_new</span> <span class="o">=</span> <span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">alpha_star</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sps</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="n">a_new</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">b_new</span><span class="p">)</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">chi_quantile</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">a1</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">t1</span>
+            <span class="n">a2</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">t2</span>
+            <span class="n">alpha_star</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sps</span><span class="o">.</span><span class="n">f</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">a1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">a2</span><span class="p">)</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">a2</span><span class="o">*</span><span class="n">t2</span><span class="o">*</span><span class="n">chi_quantile</span><span class="o">/</span><span class="p">(</span><span class="n">a1</span><span class="o">*</span><span class="n">t1</span><span class="p">))</span>
+            
+        <span class="k">return</span> <span class="n">alpha_star</span>
+
+    <span class="k">def</span> <span class="nf">_fix_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">ind_1</span><span class="p">,</span> <span class="n">dim</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">ind_2</span> <span class="o">=</span> <span class="p">(</span><span class="n">ind_1</span> <span class="o">==</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">lambda</span> <span class="n">x2</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stitch_vectors</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">ind_1</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> 
+            <span class="k">return</span> <span class="k">lambda</span> <span class="n">x2</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stitch_vectors</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">ind_1</span><span class="p">))[</span><span class="n">ind_2</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="k">lambda</span> <span class="n">x2</span><span class="p">:</span> <span class="n">f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_stitch_vectors</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">ind_1</span><span class="p">))[</span><span class="n">ind_2</span><span class="p">][:,</span><span class="n">ind_2</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;dim must be between 0 and 2 but get </span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_negative_func</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">negative_func_fx</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="o">-</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">negative_func_f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">negative_func_fx</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">negative_func_f</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_stitch_vectors</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">ind_1</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">ind_1</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">ind_1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x1</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">ind_1</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span> <span class="o">=</span> <span class="n">x2</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_get_gamma</span><span class="p">(</span><span class="n">ind_u</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return ...</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">ind_u</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sps</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">-</span> <span class="n">sps</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">))</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)[</span><span class="s1">&#39;x&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">gamma</span>
+
+<div class="viewcode-block" id="WaldEstimator.forward"><a class="viewcode-back" href="../../../statistical.html#samplesizelib.linear.statistical.WaldEstimator.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns sample size prediction for the given dataset.</span>
+<span class="sd">        </span>
+<span class="sd">        :param features: The tensor of shape</span>
+<span class="sd">            `num_elements` :math:`\times` `num_feature`.</span>
+<span class="sd">        :type features: array.</span>
+<span class="sd">        :param target: The tensor of shape `num_elements`.</span>
+<span class="sd">        :type target: array.</span>
+<span class="sd">        </span>
+<span class="sd">        :return: sample size estimation for the given dataset.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span> <span class="n">features</span>
+        <span class="n">m</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">features</span><span class="o">.</span><span class="n">shape</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ind_u</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ind_u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span> <span class="o">//</span> <span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">n</span><span class="o">//</span><span class="mi">2</span><span class="p">)])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ind_u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ind_u</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statmodel</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
+        <span class="n">w_hat</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+        <span class="n">wu0</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="n">ind_u</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">epsilon</span>
+        <span class="n">wv_hat</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_fix_variables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_negative_func</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">loglike_fixed</span><span class="p">),</span> <span class="n">wu0</span><span class="p">,</span> <span class="n">ind_u</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">ind_u</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+                     <span class="n">jac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_variables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_negative_func</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">score_fixed</span><span class="p">),</span> <span class="n">wu0</span><span class="p">,</span> <span class="n">ind_u</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                     <span class="n">hess</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_variables</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_negative_func</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">hessian_fixed</span><span class="p">),</span> <span class="n">wu0</span><span class="p">,</span> <span class="n">ind_u</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                     <span class="n">method</span> <span class="o">=</span> <span class="s1">&#39;Newton-CG&#39;</span><span class="p">)[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+
+        <span class="n">w_0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stitch_vectors</span><span class="p">(</span><span class="n">wu0</span><span class="p">,</span> <span class="n">wv_hat</span><span class="p">,</span> <span class="n">ind_u</span><span class="p">)</span>
+
+        <span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="o">-</span><span class="n">model</span><span class="o">.</span><span class="n">hessian_fixed</span><span class="p">(</span><span class="n">w_hat</span><span class="p">))[</span><span class="n">ind_u</span><span class="p">][:,</span><span class="n">ind_u</span><span class="p">],</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">V_star</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="o">-</span><span class="n">model</span><span class="o">.</span><span class="n">hessian_fixed</span><span class="p">(</span><span class="n">w_0</span><span class="p">))[</span><span class="n">ind_u</span><span class="p">][:,</span><span class="n">ind_u</span><span class="p">],</span> <span class="n">ndmin</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">Sigma</span> <span class="o">=</span> <span class="n">m</span><span class="o">*</span><span class="n">V</span>
+        <span class="n">Sigma_star</span> <span class="o">=</span> <span class="n">m</span><span class="o">*</span><span class="n">V_star</span>
+        <span class="n">w_u</span> <span class="o">=</span> <span class="n">w_hat</span><span class="p">[</span><span class="n">ind_u</span><span class="p">]</span>
+        <span class="n">w_u0</span> <span class="o">=</span> <span class="n">w_0</span><span class="p">[</span><span class="n">ind_u</span><span class="p">]</span>
+
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">((</span><span class="n">w_u</span> <span class="o">-</span> <span class="n">w_u0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span><span class="o">@</span><span class="p">(</span><span class="n">w_u</span> <span class="o">-</span> <span class="n">w_u0</span><span class="p">))</span>
+        
+        <span class="n">classification</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">))))</span> <span class="o">==</span> <span class="mi">2</span>
+        
+        <span class="k">if</span> <span class="n">classification</span><span class="p">:</span>
+            <span class="n">alpha_star</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fix_alpha</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">,</span> <span class="n">Sigma_star</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">alpha_star</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+        <span class="n">gamma_star</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_gamma</span><span class="p">(</span><span class="n">ind_u</span><span class="p">,</span> <span class="n">alpha_star</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span>
+        <span class="n">m_star</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">gamma_star</span><span class="o">/</span><span class="n">delta</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;m*&#39;</span><span class="p">:</span><span class="n">m_star</span><span class="p">}</span></div></div>
 
 </pre></div>
 
