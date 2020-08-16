@@ -41,10 +41,3 @@ More information about installation can be found in documentation `installation 
 Example of use
 ==============
 A simple examples of module usage can be found in documentation `example <https://andriygav.github.io/SampleSizeLib/example.html>`_ page.
-
-
-Changelog
-==============
-0.0.1 --- added statistical methods for sample size estimation.
-
-0.0.0 --- initial commit.
