@@ -46,4 +46,5 @@ A simple examples of module usage can be found in documentation `example <https:
 Changelog
 ==============
 0.0.1 --- added statistical methods for sample size estimation.
+
 0.0.0 --- initial commit.
