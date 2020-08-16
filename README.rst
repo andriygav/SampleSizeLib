@@ -2,7 +2,7 @@
 SampleSize Lib
 ##############
 
-|test| |codecov| |docs| 
+|test| |codecov| |docs| |readthedocs| |pypi| 
 
 .. |test| image:: https://github.com/andriygav/SampleSizeLib/workflows/test/badge.svg
     :target: https://github.com/andriygav/SampleSizeLib/tree/master
@@ -15,6 +15,14 @@ SampleSize Lib
 .. |docs| image:: https://github.com/andriygav/SampleSizeLib/workflows/docs/badge.svg
     :target: https://andriygav.github.io/SampleSizeLib/
     :alt: Build status
+
+.. |readthedocs| image:: https://img.shields.io/readthedocs/samplesizelib/stable?label=readthedocs
+    :target: https://samplesizelib.readthedocs.io/en/stable/
+    :alt: ReadTheDocs
+    
+.. |pypi| image:: https://img.shields.io/pypi/v/SampleSizeLib
+    :target: https://pypi.org/project/SampleSizeLib/
+    :alt: PyPI
 
 Basic information
 =================
@@ -37,4 +45,5 @@ A simple examples of module usage can be found in documentation `example <https:
 
 Changelog
 ==============
+0.0.1 --- added statistical methods for sample size estimation.
 0.0.0 --- initial commit.
