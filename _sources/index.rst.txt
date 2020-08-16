@@ -12,6 +12,23 @@ Welcome to Sample Size Lib!
    
    info.rst
 
+.. toctree::
+   :maxdepth: 1
+   :caption: Get Started:
+   
+   installation.rst
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Packages:
+
+   .. toctree::
+      :maxdepth: 1
+      :caption: Linear:
+      
+      statistical.rst
+      bayesian.rst
+
 Indices and tables
 ==================
 
