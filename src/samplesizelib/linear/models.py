@@ -49,7 +49,13 @@ class LinearModel(object):
         NotImplementedError
 
 class RegressionModel(LinearModel):
+    r"""
+    Description for linear regresion model
+    """
     def __init__(self, y, X, **kwards):
+        r"""
+        Constructor method.
+        """
         self.y = y
         self.X = X
         self.alpha = kwards.pop('alpha', 0.01)
@@ -65,38 +71,71 @@ class RegressionModel(LinearModel):
         self.log2pi = np.log(2*np.pi)
 
     def fit(self):
+        r"""
+        ...
+        """
         self.w = np.linalg.inv(self.alpha*np.eye(self.n) + self.X.T@self.X)@self.X.T@self.y
         return self.w
 
     def predict(self, params, X=None):
+        r"""
+        ...
+        """
         if X is None:
             X = self.X
         return X@params
 
     def loglike(self, params):
+        r"""
+        ...
+        """
         return 0.5*(-np.sum((self.y - self.X@params)**2) - self.m*self.log2pi)
 
     def score(self, params):
+        r"""
+        ...
+        """
         return self.X.T@self.y - self.X.T@self.X@params
 
     def hessian(self, params):
+        r"""
+        ...
+        """
         return -self.X.T@self.X
 
     def loglike_fixed(self, params):
+        r"""
+        ...
+        """
         return self.loglike(params) + self.prior.logpdf(params)
 
     def score_fixed(self, params):
+        r"""
+        ...
+        """
         return self.score(params) - self.alpha*params
 
     def hessian_fixed(self, params):
+        r"""
+        ...
+        """
         return self.hessian(params) - self.alpha*np.eye(self.n)
     
     def covariance(self, params):
+        r"""
+        ...
+        """
         return np.linalg.inv(-self.hessian_fixed(params))
 
 
 class LogisticModel(LinearModel):
+    r"""
+    Description for linear logistic model
+    """
     def __init__(self, y, X, **kwards):
+        r"""
+        ...
+        """
         self.y = y
         self.X = X
         self.alpha = kwards.pop('alpha', 0.01)
@@ -110,17 +149,26 @@ class LogisticModel(LinearModel):
             cov = self.alpha*np.eye(self.X.shape[1]))
 
     def fit(self):
+        r"""
+        ...
+        """
         model_sk_learn = LogisticRegression(C = 1./self.alpha)
         model_sk_learn.fit(self.X, self.y)
         self.w = model_sk_learn.coef_[0]
         return self.w
 
     def predict(self, params, X = None):
+        r"""
+        ...
+        """
         if X is None:
             X = self.X
         return expit(X@params)
 
     def loglike(self, params):
+        r"""
+        ...
+        """
         epsilon = 10**(-10)
         q = 2*self.y - 1
         res = expit(q*np.dot(self.X, params))
@@ -128,21 +176,39 @@ class LogisticModel(LinearModel):
         return np.sum(np.log(res))
 
     def score(self, params):
+        r"""
+        ...
+        """
         theta = expit(self.X@params)
         return np.dot(self.y - theta, self.X)
 
     def hessian(self, params):
+        r"""
+        ...
+        """
         theta = expit(self.X@params)
         return -np.dot(theta*(1-theta)*self.X.T, self.X)
 
     def loglike_fixed(self, params):
+        r"""
+        ...
+        """
         return self.loglike(params) + self.prior.logpdf(params)
 
     def score_fixed(self, params):
+        r"""
+        ...
+        """
         return self.score(params) - self.alpha*params
 
     def hessian_fixed(self, params):
+        r"""
+        ...
+        """
         return self.hessian(params) - self.alpha*np.eye(self.n)
 
     def covariance(self, params):
+        r"""
+        ...
+        """
         return np.linalg.inv(-self.hessian_fixed(params))
