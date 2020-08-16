@@ -31,12 +31,15 @@
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bayesian" href="bayesian.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="linear.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -93,6 +96,11 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 </ul>
+<p class="caption"><span class="caption-text">Packages:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Statistical</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayesian.html">Bayesian</a></li>
+</ul>
 
             
           
@@ -138,6 +146,8 @@
     
       <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
+          <li><a href="linear.html">&lt;no title&gt;</a> &raquo;</li>
+        
       <li>Statistical</li>
     
     
@@ -159,8 +169,48 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="statistical">
-<h1>Statistical<a class="headerlink" href="#statistical" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-samplesizelib.linear.statistical">
+<span id="statistical"></span><h1>Statistical<a class="headerlink" href="#module-samplesizelib.linear.statistical" title="Permalink to this headline">¶</a></h1>
+<p>The <a class="reference internal" href="#module-samplesizelib.linear.statistical" title="samplesizelib.linear.statistical"><code class="xref py py-mod docutils literal notranslate"><span class="pre">samplesizelib.linear.statistical</span></code></a> contains classes:
+- <a class="reference internal" href="#samplesizelib.linear.statistical.LagrangeEstimator" title="samplesizelib.linear.statistical.LagrangeEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">samplesizelib.linear.statistical.LagrangeEstimator</span></code></a></p>
+<dl class="py class">
+<dt id="samplesizelib.linear.statistical.LagrangeEstimator">
+<em class="property">class </em><code class="sig-prename descclassname">samplesizelib.linear.statistical.</code><code class="sig-name descname">LagrangeEstimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">statmodel</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwards</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/statistical.html#LagrangeEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.statistical.LagrangeEstimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of Lagrange Method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statmodel</strong> (<em>RegressionModel</em><em> or </em><em>LogisticModel</em>) – the machine learning algorithm</p></li>
+<li><p><strong>ind_u</strong> (<em>numpy.ndarray</em>) – to do</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – to do</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="samplesizelib.linear.statistical.LagrangeEstimator.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">features</span></em>, <em class="sig-param"><span class="n">target</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/statistical.html#LagrangeEstimator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.statistical.LagrangeEstimator.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns sample size prediction for the given dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>array.</em>) – The tensor of shape
+<cite>num_elements</cite> <span class="math notranslate nohighlight">\(\times\)</span> <cite>num_feature</cite>.</p></li>
+<li><p><strong>target</strong> (<em>array.</em>) – The tensor of shape <cite>num_elements</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sample size estimation for the given dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -168,6 +218,15 @@
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="bayesian.html" class="btn btn-neutral float-right" title="Bayesian" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="linear.html" class="btn btn-neutral float-left" title="&lt;no title&gt;" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>
