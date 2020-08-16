@@ -2,6 +2,9 @@
 # -*- coding: utf-8 -*-
 """
 The :mod:`samplesizelib.linear.heuristic` contains classes:
+
+- :class:`samplesizelib.linear.heuristic.CrossValidationEstimator`
+- :class:`samplesizelib.linear.heuristic.BootstrapEstimator`
 """
 from __future__ import print_function
 
@@ -207,7 +210,7 @@ class CrossValidationEstimator(SampleSizeEstimator):
 
 class BootstrapEstimator(SampleSizeEstimator):
     r"""
-    Description of Cross Validation Method
+    Description of Bootstrap Method
 
     :param statmodel: the machine learning algorithm
     :type statmodel: RegressionModel or LogisticModel
