@@ -17,6 +17,7 @@ Welcome to Sample Size Lib!
    :caption: Get Started:
    
    installation.rst
+   example.rst
 
 .. toctree::
    :maxdepth: 2
