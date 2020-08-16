@@ -1,0 +1,48 @@
+name: pypi
+
+on: [push]
+
+jobs:
+  pypi:
+    name: pypi
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: [3.6]
+        
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.6
+
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2
+        
+      - name: Install Dependencies
+        run: |
+          pip install -U setuptools
+          pip install -U wheel
+          pip install -U twine
+          
+      - name: Create Package dir
+        run: |
+          cp -r src/ package
+          cp README.rst package/
+          cp LICENSE package/
+
+      - name: Make Package Dist
+        run: |
+          cd package/
+          python setup.py sdist bdist_wheel
+          cd ..
+
+      - name: Publish Package
+        if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: ${{ secrets.pypi_login }}
+          password: ${{ secrets.pypi_password }}
+          packages_dir: package/dist/
+
