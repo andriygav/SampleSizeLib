@@ -18,6 +18,16 @@ class SampleSizeEstimator(object):
 
     def __call__(self, features, target):
         r"""
+        Returns sample size prediction for the given dataset.
+        
+        :param features: The tensor of shape
+            `num_elements` :math:`\times` `num_feature`.
+        :type features: array.
+        :param target: The tensor of shape `num_elements`.
+        :type target: array.
+        
+        :return: sample size estimation for the given dataset.
+        :rtype: float
         """
         return self.forward(features, target)
 
