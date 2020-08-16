@@ -8,3 +8,4 @@ Linear Models
 
    statistical.rst
    bayesian.rst
+   heuristic.rst
