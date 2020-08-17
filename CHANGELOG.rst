@@ -5,6 +5,7 @@ Changelog
 Changes:
 
 v0.0.2 (future)
+  - add bayesian methods
   - add heuristic methods
   - add dataset type with subsample generator
 

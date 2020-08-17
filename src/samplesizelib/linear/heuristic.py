@@ -14,7 +14,6 @@ from multiprocessing import Pool
 
 import numpy as np
 from tqdm import tqdm
-from sklearn.utils import shuffle
 
 from ..shared.estimator import SampleSizeEstimator
 from ..shared.utils import Dataset
