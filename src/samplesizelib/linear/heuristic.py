@@ -14,6 +14,8 @@ from multiprocessing import Pool
 
 import numpy as np
 from tqdm import tqdm
+import scipy.stats as sps
+from sklearn.metrics import roc_curve
 
 from ..shared.estimator import SampleSizeEstimator
 from ..shared.utils import Dataset
@@ -396,3 +398,85 @@ class BootstrapEstimator(SampleSizeEstimator):
                 'S': np.array(list_of_S),
                 'm': np.array(subset_sizes),
                }
+
+class LogisticRegressionEstimator(SampleSizeEstimator):
+    r"""
+    Description of Logistic Regression Method
+
+    :param statmodel: the machine learning algorithm
+    :type statmodel: RegressionModel or LogisticModel
+    :param ind: to do
+    :type ind: int
+    :param alpha: to do
+    :type alpha: float
+    :param beta: to do
+    :type beta: float
+    """
+
+    def __init__(self, statmodel, **kwards):
+        r"""Constructor method
+        """
+        self.statmodel = statmodel
+
+        self.ind = int(kwards.pop('ind', 0))
+        if self.ind < 0:
+            raise ValueError(
+                "The ind must be positive value but get {}".format(
+                    self.ind))
+
+        self.alpha = kwards.pop('alpha', 0.05)
+        if self.alpha < 0 or self.alpha > 1:
+            raise ValueError(
+                "The alpha must be between 0 and 1 but get {}".format(
+                    self.alpha))
+        self.beta = kwards.pop('beta', 0.2)
+        if self.beta < 0 or self.beta > 1:
+            raise ValueError(
+                "The beta must be between 0 and 1 but get {}".format(
+                    self.beta))
+
+        if kwards:
+            raise ValueError("Invalid parameters: %s" % str(kwards))
+
+        self.dataset = None
+
+    def forward(self, features, target):
+        r"""
+        Returns sample size prediction for the given dataset.
+        
+        :param features: The tensor of shape
+            `num_elements` :math:`\times` `num_feature`.
+        :type features: array.
+        :param target: The tensor of shape `num_elements`.
+        :type target: array.
+        
+        :return: sample size estimation for the given dataset.
+        :rtype: dict
+        """
+        y, X = target, features
+        self.dataset = Dataset(features, target)
+
+
+        w_hat0 = self.statmodel(y, np.delete(X, self.ind, axis = 1)).fit()
+        w_hat1 = self.statmodel(y, X).fit()
+
+        predict0 = self.statmodel(y, np.delete(X, self.ind, axis = 1)).predict(w_hat0)
+        predict1 = self.statmodel(y, X).predict(w_hat1)
+
+        fpr0, tpr0, threshold0 = roc_curve(y, predict0)
+        fpr1, tpr1, threshold1 = roc_curve(y, predict1)
+        
+        c0 = threshold0[np.argmax((tpr0 - threshold0)**2 - (fpr0 - threshold0)**2)]
+        c1 = threshold1[np.argmax((tpr1 - threshold1)**2 - (fpr1 - threshold1)**2)]
+
+        p0 = np.mean(predict0 > c0)
+        p1 = np.mean(predict1 > c0)
+        
+        t_alpha = sps.norm.ppf(1 - 0.5*self.alpha)
+        t_beta = sps.norm.ppf(1 - self.beta)
+        m_size = ((np.sqrt(p0*(1-p0))*t_alpha+t_beta*np.sqrt(p1*(1-p1)))**2)/((p0-p1)**2)
+
+        return {'m*': int(m_size),
+               } 
+
+

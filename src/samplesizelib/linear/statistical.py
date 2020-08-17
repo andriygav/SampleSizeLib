@@ -58,7 +58,7 @@ class LagrangeEstimator(SampleSizeEstimator):
                 "The alpha must be between 0 and 1 but get {}".format(
                     self.alpha))
         self.beta = kwards.pop('beta', 0.05)
-        if self.beta < 0 or self.alpha > 1:
+        if self.beta < 0 or self.beta > 1:
             raise ValueError(
                 "The beta must be between 0 and 1 but get {}".format(
                     self.beta))
