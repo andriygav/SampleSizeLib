@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block content %}
+  <div class="home">
+    <h1>Проверка файла</h1>
+  </div>
+  <form action = "/checker" method = "POST" enctype = "multipart/form-data">
+    <input type = "file" name = "file" />
+    <input type = "submit"/>
+  </form> 
+{% endblock %}
