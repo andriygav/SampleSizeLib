@@ -99,9 +99,19 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Example</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#preparing-the-dataset">Preparing the dataset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#statictical-metods">Statictical Metods</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#bayesian-metods">Bayesian Metods</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#regression-task">Regression task</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#classification-task">Classification task</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Bayesian Metods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Regression task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Classification task</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statictical-metods">Statictical Metods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Regression task</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">Classification task</a></li>
 </ul>
 </li>
 </ul>
@@ -183,7 +193,7 @@
 <h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
 <p>It is recommended make virtualenv and install all next packages
 in this virtualenv.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">samplesizelib</span><span class="o">==</span><span class="mf">0.0</span><span class="o">.</span><span class="mi">1</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">samplesizelib</span><span class="o">==</span><span class="mf">0.0</span><span class="o">.</span><span class="mi">2</span>
 </pre></div>
 </div>
 <p>Include packages.</p>
@@ -193,7 +203,16 @@ in this virtualenv.</p>
 <span class="kn">from</span> <span class="nn">samplesizelib.linear.statistical</span> <span class="kn">import</span> <span class="n">LikelihoodRatioEstimator</span>
 <span class="kn">from</span> <span class="nn">samplesizelib.linear.statistical</span> <span class="kn">import</span> <span class="n">WaldEstimator</span>
 <span class="kn">from</span> <span class="nn">samplesizelib.linear.models</span> <span class="kn">import</span> <span class="n">RegressionModel</span>
-<span class="kn">from</span> <span class="nn">samplesizelib.linear.models</span> <span class="n">LogisticModel</span>
+<span class="kn">from</span> <span class="nn">samplesizelib.linear.models</span> <span class="kn">import</span> <span class="n">LogisticModel</span>
+
+<span class="kn">from</span> <span class="nn">samplesizelib.linear.heuristic</span> <span class="kn">import</span> <span class="n">CrossValidationEstimator</span>
+<span class="kn">from</span> <span class="nn">samplesizelib.linear.heuristic</span> <span class="kn">import</span> <span class="n">BootstrapEstimator</span>
+<span class="kn">from</span> <span class="nn">samplesizelib.linear.heuristic</span> <span class="kn">import</span> <span class="n">LogisticRegressionEstimator</span>
+<span class="kn">from</span> <span class="nn">samplesizelib.linear.bayesian</span> <span class="kn">import</span> <span class="n">APVCEstimator</span>
+<span class="kn">from</span> <span class="nn">samplesizelib.linear.bayesian</span> <span class="kn">import</span> <span class="n">ACCEstimator</span>
+<span class="kn">from</span> <span class="nn">samplesizelib.linear.bayesian</span> <span class="kn">import</span> <span class="n">ALCEstimator</span>
+<span class="kn">from</span> <span class="nn">samplesizelib.linear.bayesian</span> <span class="kn">import</span> <span class="n">MaxUtilityEstimator</span>
+<span class="kn">from</span> <span class="nn">samplesizelib.linear.bayesian</span> <span class="kn">import</span> <span class="n">KLEstimator</span>
 </pre></div>
 </div>
 </div>
@@ -201,7 +220,7 @@ in this virtualenv.</p>
 <h2>Preparing the dataset<a class="headerlink" href="#preparing-the-dataset" title="Permalink to this headline">¶</a></h2>
 <p>Generate dataset for regression and classification tasks.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">m</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">m</span> <span class="o">=</span> <span class="mi">300</span>
 
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">X_cl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
@@ -213,10 +232,133 @@ in this virtualenv.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="statictical-metods">
-<h2>Statictical Metods<a class="headerlink" href="#statictical-metods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="bayesian-metods">
+<h2>Bayesian Metods<a class="headerlink" href="#bayesian-metods" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="regression-task">
 <h3>Regression task<a class="headerlink" href="#regression-task" title="Permalink to this headline">¶</a></h3>
+<p>Example of Bootstrap based method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">BootstrapEstimator</span><span class="p">(</span><span class="n">RegressionModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_rg</span><span class="p">,</span> <span class="n">y_rg</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Example of Cross Validation based method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">CrossValidationEstimator</span><span class="p">(</span><span class="n">RegressionModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_rg</span><span class="p">,</span> <span class="n">y_rg</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="classification-task">
+<h3>Classification task<a class="headerlink" href="#classification-task" title="Permalink to this headline">¶</a></h3>
+<p>Example of Logistic Regression method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">LogisticRegressionEstimator</span><span class="p">(</span><span class="n">LogisticModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_cl</span><span class="p">,</span> <span class="n">y_cl</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Example of Bootstrap based method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">BootstrapEstimator</span><span class="p">(</span><span class="n">LogisticModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_cl</span><span class="p">,</span> <span class="n">y_cl</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Example of Cross Validation based method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">CrossValidationEstimator</span><span class="p">(</span><span class="n">LogisticModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_cl</span><span class="p">,</span> <span class="n">y_cl</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id1">
+<h2>Bayesian Metods<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id2">
+<h3>Regression task<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Example of KL-divergence method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">KLEstimator</span><span class="p">(</span><span class="n">RegressionModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_rg</span><span class="p">,</span> <span class="n">y_rg</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Example of Max Utility method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">MaxUtilityEstimator</span><span class="p">(</span><span class="n">RegressionModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_rg</span><span class="p">,</span> <span class="n">y_rg</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Example of ALC method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ALCEstimator</span><span class="p">(</span><span class="n">RegressionModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_rg</span><span class="p">,</span> <span class="n">y_rg</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Example of ACC method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ACCEstimator</span><span class="p">(</span><span class="n">RegressionModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_rg</span><span class="p">,</span> <span class="n">y_rg</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Example of APVC method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">APVCEstimator</span><span class="p">(</span><span class="n">RegressionModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_rg</span><span class="p">,</span> <span class="n">y_rg</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>Classification task<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>Example of KL-divergence method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">KLEstimator</span><span class="p">(</span><span class="n">LogisticModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_cl</span><span class="p">,</span> <span class="n">y_cl</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Example of Max Utility method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">MaxUtilityEstimator</span><span class="p">(</span><span class="n">LogisticModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_cl</span><span class="p">,</span> <span class="n">y_cl</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Example of ALC method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ALCEstimator</span><span class="p">(</span><span class="n">LogisticModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_cl</span><span class="p">,</span> <span class="n">y_cl</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Example of ACC method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ACCEstimator</span><span class="p">(</span><span class="n">LogisticModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_cl</span><span class="p">,</span> <span class="n">y_cl</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Example of APVC method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">APVCEstimator</span><span class="p">(</span><span class="n">LogisticModel</span><span class="p">)</span>
+<span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_cl</span><span class="p">,</span> <span class="n">y_cl</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">ret</span><span class="p">[</span><span class="s1">&#39;m*&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="statictical-metods">
+<h2>Statictical Metods<a class="headerlink" href="#statictical-metods" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id4">
+<h3>Regression task<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <p>Example of Lagrange based method:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">LagrangeEstimator</span><span class="p">(</span><span class="n">RegressionModel</span><span class="p">)</span>
 <span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_rg</span><span class="p">,</span> <span class="n">y_rg</span><span class="p">)</span>
@@ -239,8 +381,8 @@ in this virtualenv.</p>
 </pre></div>
 </div>
 </div>
-<div class="section" id="classification-task">
-<h3>Classification task<a class="headerlink" href="#classification-task" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id5">
+<h3>Classification task<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <p>Example of Lagrange based method:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">LagrangeEstimator</span><span class="p">(</span><span class="n">LogisticModel</span><span class="p">)</span>
 <span class="n">ret</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X_cl</span><span class="p">,</span> <span class="n">y_cl</span><span class="p">)</span>
