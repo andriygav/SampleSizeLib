@@ -179,6 +179,8 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">sps</span>
+<span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_curve</span>
 
 <span class="kn">from</span> <span class="nn">..shared.estimator</span> <span class="kn">import</span> <span class="n">SampleSizeEstimator</span>
 <span class="kn">from</span> <span class="nn">..shared.utils</span> <span class="kn">import</span> <span class="n">Dataset</span>
@@ -561,6 +563,88 @@
                 <span class="s1">&#39;S&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">list_of_S</span><span class="p">),</span>
                 <span class="s1">&#39;m&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">subset_sizes</span><span class="p">),</span>
                <span class="p">}</span></div></div>
+
+<div class="viewcode-block" id="LogisticRegressionEstimator"><a class="viewcode-back" href="../../../heuristic.html#samplesizelib.linear.heuristic.LogisticRegressionEstimator">[docs]</a><span class="k">class</span> <span class="nc">LogisticRegressionEstimator</span><span class="p">(</span><span class="n">SampleSizeEstimator</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Description of Logistic Regression Method</span>
+
+<span class="sd">    :param statmodel: the machine learning algorithm</span>
+<span class="sd">    :type statmodel: RegressionModel or LogisticModel</span>
+<span class="sd">    :param ind: to do</span>
+<span class="sd">    :type ind: int</span>
+<span class="sd">    :param alpha: to do</span>
+<span class="sd">    :type alpha: float</span>
+<span class="sd">    :param beta: to do</span>
+<span class="sd">    :type beta: float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">statmodel</span><span class="p">,</span> <span class="o">**</span><span class="n">kwards</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Constructor method</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statmodel</span> <span class="o">=</span> <span class="n">statmodel</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ind</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">kwards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;ind&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ind</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The ind must be positive value but get </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">ind</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">kwards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;alpha&#39;</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The alpha must be between 0 and 1 but get </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">kwards</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;beta&#39;</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;The beta must be between 0 and 1 but get </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">kwards</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid parameters: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">kwards</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="LogisticRegressionEstimator.forward"><a class="viewcode-back" href="../../../heuristic.html#samplesizelib.linear.heuristic.LogisticRegressionEstimator.forward">[docs]</a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">features</span><span class="p">,</span> <span class="n">target</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns sample size prediction for the given dataset.</span>
+<span class="sd">        </span>
+<span class="sd">        :param features: The tensor of shape</span>
+<span class="sd">            `num_elements` :math:`\times` `num_feature`.</span>
+<span class="sd">        :type features: array.</span>
+<span class="sd">        :param target: The tensor of shape `num_elements`.</span>
+<span class="sd">        :type target: array.</span>
+<span class="sd">        </span>
+<span class="sd">        :return: sample size estimation for the given dataset.</span>
+<span class="sd">        :rtype: dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">target</span><span class="p">,</span> <span class="n">features</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">Dataset</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">target</span><span class="p">)</span>
+
+
+        <span class="n">w_hat0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statmodel</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ind</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="n">w_hat1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statmodel</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+        <span class="n">predict0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statmodel</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ind</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">w_hat0</span><span class="p">)</span>
+        <span class="n">predict1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statmodel</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">w_hat1</span><span class="p">)</span>
+
+        <span class="n">fpr0</span><span class="p">,</span> <span class="n">tpr0</span><span class="p">,</span> <span class="n">threshold0</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">predict0</span><span class="p">)</span>
+        <span class="n">fpr1</span><span class="p">,</span> <span class="n">tpr1</span><span class="p">,</span> <span class="n">threshold1</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">predict1</span><span class="p">)</span>
+        
+        <span class="n">c0</span> <span class="o">=</span> <span class="n">threshold0</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">((</span><span class="n">tpr0</span> <span class="o">-</span> <span class="n">threshold0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">fpr0</span> <span class="o">-</span> <span class="n">threshold0</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)]</span>
+        <span class="n">c1</span> <span class="o">=</span> <span class="n">threshold1</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">((</span><span class="n">tpr1</span> <span class="o">-</span> <span class="n">threshold1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="p">(</span><span class="n">fpr1</span> <span class="o">-</span> <span class="n">threshold1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)]</span>
+
+        <span class="n">p0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">predict0</span> <span class="o">&gt;</span> <span class="n">c0</span><span class="p">)</span>
+        <span class="n">p1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">predict1</span> <span class="o">&gt;</span> <span class="n">c0</span><span class="p">)</span>
+        
+        <span class="n">t_alpha</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">t_beta</span> <span class="o">=</span> <span class="n">sps</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span>
+        <span class="n">m_size</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p0</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p0</span><span class="p">))</span><span class="o">*</span><span class="n">t_alpha</span><span class="o">+</span><span class="n">t_beta</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">p1</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">p1</span><span class="p">)))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="n">p0</span><span class="o">-</span><span class="n">p1</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;m*&#39;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">m_size</span><span class="p">),</span>
+               <span class="p">}</span> </div></div>
+
+
 </pre></div>
 
            </div>

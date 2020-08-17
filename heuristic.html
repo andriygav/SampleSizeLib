@@ -264,6 +264,43 @@
 
 </dd></dl>
 
+<dl class="py class">
+<dt id="samplesizelib.linear.heuristic.LogisticRegressionEstimator">
+<em class="property">class </em><code class="sig-prename descclassname">samplesizelib.linear.heuristic.</code><code class="sig-name descname">LogisticRegressionEstimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">statmodel</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwards</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/heuristic.html#LogisticRegressionEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.heuristic.LogisticRegressionEstimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of Logistic Regression Method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statmodel</strong> (<em>RegressionModel</em><em> or </em><em>LogisticModel</em>) – the machine learning algorithm</p></li>
+<li><p><strong>ind</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – to do</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="samplesizelib.linear.heuristic.LogisticRegressionEstimator.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">features</span></em>, <em class="sig-param"><span class="n">target</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/heuristic.html#LogisticRegressionEstimator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.heuristic.LogisticRegressionEstimator.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns sample size prediction for the given dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>array.</em>) – The tensor of shape
+<cite>num_elements</cite> <span class="math notranslate nohighlight">\(\times\)</span> <cite>num_feature</cite>.</p></li>
+<li><p><strong>target</strong> (<em>array.</em>) – The tensor of shape <cite>num_elements</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sample size estimation for the given dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
