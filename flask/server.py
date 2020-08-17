@@ -22,10 +22,10 @@ def check():
 
 @app.route('/checker', methods = ['GET', 'POST'])
 def checker():
-    status = 'Данные не загружены.'
+    status = 'Dataset is not downloaded.'
     
     if request.method == 'POST':
-        status = 'Данные загружены, но не обработаны, попробуйте еще раз.'
+        status = 'Dataset is loaded but not processed, please try again.'
         
         tables = None
         
@@ -39,11 +39,11 @@ def checker():
             os.close(new_file)
             
             if extension == 'csv':
-                status = 'Данные отправлены на проверку файла типа csv, но не обработаны, попробуйте еще раз.'
+                status = 'Dataset is received but not processed, please try again.'
 
                 dataset = pd.read_csv(filename)
                 if 'y' not in dataset:
-                    status = 'Столбец ответов "y" не задан'
+                    status = 'Target column "y" is not specified'
                 else:
                     y = dataset['y'].to_numpy()
                     del dataset['y']
@@ -64,12 +64,12 @@ def checker():
                 status = None
 
             else:
-                status = 'Не верное расширение файла: "{}".'.format(extension)
+                status = 'Invalid file extension: "{}".'.format(extension)
                 
             os.remove(filename)
            
         else:
-            status = 'Не верное расширение файла: "{}".'.format('')
+            status = 'Invalid file extension: "{}".'.format('')
         
         
     return render_template('checker.html', status=status,  tables=tables)
