@@ -4,6 +4,10 @@ Changelog
 
 Changes:
 
+v0.0.3 (future)
+  - add api
+  - add flask usage
+
 v0.0.2 (stable)
   - add bayesian methods
   - add heuristic methods
