@@ -19,6 +19,7 @@ Welcome to Sample Size Lib!
    
    installation.rst
    example.rst
+   flask.rst
 
 .. toctree::
    :maxdepth: 2
