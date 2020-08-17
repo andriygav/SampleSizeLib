@@ -177,7 +177,219 @@
             
   <div class="section" id="module-samplesizelib.linear.bayesian">
 <span id="bayesian"></span><h1>Bayesian<a class="headerlink" href="#module-samplesizelib.linear.bayesian" title="Permalink to this headline">¶</a></h1>
-<p>The <a class="reference internal" href="#module-samplesizelib.linear.bayesian" title="samplesizelib.linear.bayesian"><code class="xref py py-mod docutils literal notranslate"><span class="pre">samplesizelib.linear.bayesian</span></code></a> contains classes:</p>
+<p>The <a class="reference internal" href="#module-samplesizelib.linear.bayesian" title="samplesizelib.linear.bayesian"><code class="xref py py-mod docutils literal notranslate"><span class="pre">samplesizelib.linear.bayesian</span></code></a> contains classes:
+- <a class="reference internal" href="#samplesizelib.linear.bayesian.APVCEstimator" title="samplesizelib.linear.bayesian.APVCEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">samplesizelib.linear.bayesian.APVCEstimator</span></code></a>
+- <a class="reference internal" href="#samplesizelib.linear.bayesian.ACCEstimator" title="samplesizelib.linear.bayesian.ACCEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">samplesizelib.linear.bayesian.ACCEstimator</span></code></a>
+- <a class="reference internal" href="#samplesizelib.linear.bayesian.ALCEstimator" title="samplesizelib.linear.bayesian.ALCEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">samplesizelib.linear.bayesian.ALCEstimator</span></code></a>
+- <a class="reference internal" href="#samplesizelib.linear.bayesian.MaxUtilityEstimator" title="samplesizelib.linear.bayesian.MaxUtilityEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">samplesizelib.linear.bayesian.MaxUtilityEstimator</span></code></a>
+- <a class="reference internal" href="#samplesizelib.linear.bayesian.KLEstimator" title="samplesizelib.linear.bayesian.KLEstimator"><code class="xref py py-class docutils literal notranslate"><span class="pre">samplesizelib.linear.bayesian.KLEstimator</span></code></a></p>
+<dl class="py class">
+<dt id="samplesizelib.linear.bayesian.ACCEstimator">
+<em class="property">class </em><code class="sig-prename descclassname">samplesizelib.linear.bayesian.</code><code class="sig-name descname">ACCEstimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">statmodel</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwards</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/bayesian.html#ACCEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.bayesian.ACCEstimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of ACC Method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statmodel</strong> (<em>RegressionModel</em><em> or </em><em>LogisticModel</em>) – the machine learning algorithm</p></li>
+<li><p><strong>averaging</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>length</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>begin</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>multiprocess</strong> (<em>bool</em>) – to do</p></li>
+<li><p><strong>progressbar</strong> (<em>bool</em>) – to do</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="samplesizelib.linear.bayesian.ACCEstimator.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">features</span></em>, <em class="sig-param"><span class="n">target</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/bayesian.html#ACCEstimator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.bayesian.ACCEstimator.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns sample size prediction for the given dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>array.</em>) – The tensor of shape
+<cite>num_elements</cite> <span class="math notranslate nohighlight">\(\times\)</span> <cite>num_feature</cite>.</p></li>
+<li><p><strong>target</strong> (<em>array.</em>) – The tensor of shape <cite>num_elements</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sample size estimation for the given dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="samplesizelib.linear.bayesian.ALCEstimator">
+<em class="property">class </em><code class="sig-prename descclassname">samplesizelib.linear.bayesian.</code><code class="sig-name descname">ALCEstimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">statmodel</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwards</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/bayesian.html#ALCEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.bayesian.ALCEstimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of ALC Method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statmodel</strong> (<em>RegressionModel</em><em> or </em><em>LogisticModel</em>) – the machine learning algorithm</p></li>
+<li><p><strong>averaging</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>length</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>begin</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>multiprocess</strong> (<em>bool</em>) – to do</p></li>
+<li><p><strong>progressbar</strong> (<em>bool</em>) – to do</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="samplesizelib.linear.bayesian.ALCEstimator.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">features</span></em>, <em class="sig-param"><span class="n">target</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/bayesian.html#ALCEstimator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.bayesian.ALCEstimator.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns sample size prediction for the given dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>array.</em>) – The tensor of shape
+<cite>num_elements</cite> <span class="math notranslate nohighlight">\(\times\)</span> <cite>num_feature</cite>.</p></li>
+<li><p><strong>target</strong> (<em>array.</em>) – The tensor of shape <cite>num_elements</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sample size estimation for the given dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="samplesizelib.linear.bayesian.APVCEstimator">
+<em class="property">class </em><code class="sig-prename descclassname">samplesizelib.linear.bayesian.</code><code class="sig-name descname">APVCEstimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">statmodel</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwards</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/bayesian.html#APVCEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.bayesian.APVCEstimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of APVC Method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statmodel</strong> (<em>RegressionModel</em><em> or </em><em>LogisticModel</em>) – the machine learning algorithm</p></li>
+<li><p><strong>averaging</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>begin</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>multiprocess</strong> (<em>bool</em>) – to do</p></li>
+<li><p><strong>progressbar</strong> (<em>bool</em>) – to do</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="samplesizelib.linear.bayesian.APVCEstimator.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">features</span></em>, <em class="sig-param"><span class="n">target</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/bayesian.html#APVCEstimator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.bayesian.APVCEstimator.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns sample size prediction for the given dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>array.</em>) – The tensor of shape
+<cite>num_elements</cite> <span class="math notranslate nohighlight">\(\times\)</span> <cite>num_feature</cite>.</p></li>
+<li><p><strong>target</strong> (<em>array.</em>) – The tensor of shape <cite>num_elements</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sample size estimation for the given dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="samplesizelib.linear.bayesian.KLEstimator">
+<em class="property">class </em><code class="sig-prename descclassname">samplesizelib.linear.bayesian.</code><code class="sig-name descname">KLEstimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">statmodel</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwards</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/bayesian.html#KLEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.bayesian.KLEstimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of KL based Method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statmodel</strong> (<em>RegressionModel</em><em> or </em><em>LogisticModel</em>) – the machine learning algorithm</p></li>
+<li><p><strong>averaging</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>epsilon</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>begin</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>multiprocess</strong> (<em>bool</em>) – to do</p></li>
+<li><p><strong>progressbar</strong> (<em>bool</em>) – to do</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="samplesizelib.linear.bayesian.KLEstimator.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">features</span></em>, <em class="sig-param"><span class="n">target</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/bayesian.html#KLEstimator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.bayesian.KLEstimator.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns sample size prediction for the given dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>array.</em>) – The tensor of shape
+<cite>num_elements</cite> <span class="math notranslate nohighlight">\(\times\)</span> <cite>num_feature</cite>.</p></li>
+<li><p><strong>target</strong> (<em>array.</em>) – The tensor of shape <cite>num_elements</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sample size estimation for the given dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="samplesizelib.linear.bayesian.MaxUtilityEstimator">
+<em class="property">class </em><code class="sig-prename descclassname">samplesizelib.linear.bayesian.</code><code class="sig-name descname">MaxUtilityEstimator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">statmodel</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwards</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/bayesian.html#MaxUtilityEstimator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.bayesian.MaxUtilityEstimator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Description of Utility Maximisation Method</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>statmodel</strong> (<em>RegressionModel</em><em> or </em><em>LogisticModel</em>) – the machine learning algorithm</p></li>
+<li><p><strong>averaging</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>c</strong> (<em>float</em>) – to do</p></li>
+<li><p><strong>begin</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>num</strong> (<em>int</em>) – to do</p></li>
+<li><p><strong>multiprocess</strong> (<em>bool</em>) – to do</p></li>
+<li><p><strong>progressbar</strong> (<em>bool</em>) – to do</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="samplesizelib.linear.bayesian.MaxUtilityEstimator.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">features</span></em>, <em class="sig-param"><span class="n">target</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/samplesizelib/linear/bayesian.html#MaxUtilityEstimator.forward"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#samplesizelib.linear.bayesian.MaxUtilityEstimator.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns sample size prediction for the given dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>features</strong> (<em>array.</em>) – The tensor of shape
+<cite>num_elements</cite> <span class="math notranslate nohighlight">\(\times\)</span> <cite>num_feature</cite>.</p></li>
+<li><p><strong>target</strong> (<em>array.</em>) – The tensor of shape <cite>num_elements</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>sample size estimation for the given dataset.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
