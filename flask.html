@@ -103,6 +103,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#run-service">Run Service</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#service-usage">Service Usage</a></li>
 </ul>
 </li>
 </ul>
@@ -198,6 +199,25 @@
 </pre></div>
 </div>
 <p>where 8080 is a port where service runnning. After running, follow the link <a class="reference external" href="http://localhost:8080">link</a> page.</p>
+</div>
+<div class="section" id="service-usage">
+<h2>Service Usage<a class="headerlink" href="#service-usage" title="Permalink to this headline">¶</a></h2>
+<p>To analyze the sample size for given data, upload a csv file with data in the following format:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>y,x_1,x_2
+<span class="m">1</span>.0,1.76,0.4
+<span class="m">0</span>.0,0.98,2.24
+<span class="m">1</span>.0,1.87,-0.98
+<span class="m">0</span>.0,0.95,-0.15
+<span class="m">1</span>.0,-0.1,0.41
+<span class="m">0</span>.0,0.14,1.45
+<span class="m">0</span>.0,0.76,0.12
+<span class="m">0</span>.0,0.44,0.33
+<span class="m">0</span>.0,1.49,-0.21
+<span class="m">0</span>.0,0.31,-0.85
+<span class="m">1</span>.0,-2.55,0.65
+</pre></div>
+</div>
+<p>The CSV file must contain the target variable in the column named ‘y’. Feature columns can have any names.</p>
 </div>
 </div>
 
