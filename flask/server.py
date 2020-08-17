@@ -15,13 +15,7 @@ from samplesizelib.linear.models import LogisticModel, RegressionModel
 
 app = Flask(__name__)
 
-save_dir = '/save'
-
 @app.route('/')
-@app.route('/index')
-def index():
-    return render_template('index.html')
-
 @app.route('/check')
 def check():
     return render_template('check.html')

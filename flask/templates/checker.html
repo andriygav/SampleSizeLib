@@ -1,18 +1,18 @@
 {% extends "layout.html" %}
 {% block content %}
     <div class="home">
-        <h1>Результат работы</h1>
+        <h1>Sample Size Analysis Result</h1>
     </div>
     {% if status %}
         <div class="home">
-            <h2>Сообщение</h2>
+            <h2>Error</h2>
         </div>
         {% autoescape false %}
           {{status}}
         {% endautoescape %}
     {% else %}
         <div class="home">
-        <h2>Краткий обзор</h2>
+        <h2>Brief review</h2>
         </div>
         {% if tables %}
             {{ tables[0]|safe }}
