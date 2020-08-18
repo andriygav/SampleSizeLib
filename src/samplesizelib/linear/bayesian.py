@@ -237,7 +237,7 @@ class ACCEstimator(SampleSizeEstimator):
                 "The averaging should be positive but get {}".format(
                     self.averaging))
 
-        self.length = kwards.pop('epsilon', 0.25)
+        self.length = kwards.pop('length', 0.25)
         if self.length <= 0:
             raise ValueError(
                 "The length must be positive value but get {}".format(
@@ -428,7 +428,7 @@ class ALCEstimator(SampleSizeEstimator):
                 "The averaging should be positive but get {}".format(
                     self.averaging))
 
-        self.length = kwards.pop('epsilon', 0.5)
+        self.length = kwards.pop('length', 0.5)
         if self.length <= 0:
             raise ValueError(
                 "The length must be positive value but get {}".format(
@@ -618,7 +618,7 @@ class MaxUtilityEstimator(SampleSizeEstimator):
                 "The averaging should be positive but get {}".format(
                     self.averaging))
 
-        self.c = kwards.pop('epsilon', 0.005)
+        self.c = kwards.pop('c', 0.005)
         if self.c <= 0:
             raise ValueError(
                 "The c must be positive value but get {}".format(

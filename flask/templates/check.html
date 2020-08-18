@@ -1,10 +1,43 @@
 {% extends "layout.html" %}
 {% block content %}
-  <div class="home">
-    <h1>Upload the file</h1>
-  </div>
-  <form action = "/checker" method = "POST" enctype = "multipart/form-data">
-    <input type = "file" name = "file" />
-    <input type = "submit"/>
-  </form> 
+    <div class="home">
+        <h1>Upload the file</h1>
+    </div>
+    <form action = "/checker" method = "POST" enctype = "multipart/form-data">
+        <p>
+            <select size="1" name="statmodel">
+                <option disabled>Choise model</option>
+                <option value="LogisticModel">LogisticModel</option>
+                <option selected value="RegressionModel">RegressionModel</option>
+            </select>
+        </p>
+        <br>
+        <input type = "file" name = "file" />
+        <input type = "submit"/>
+        <br>
+        <br>
+        {%for key in config%}
+            <table border="1" class="dataframe data">
+              <thead>
+                <tr style="text-align: center;">
+                  <th></th>
+                  <th>Use</th>
+                  {% for param in config[key]%}
+                    <th>{{param}}</th>
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="text-align: center;">
+                  <th>{{key}}</th>
+                  <td><input type="checkbox" checked="checked" name="config[{{key}}][use]" /></td>
+                  {% for param in config[key]%}
+                    <td><input type="number" step="0.01" value={{config[key][param]}} name="config[{{key}}][{{param}}]"></td>
+                  {% endfor %}
+                </tr>
+              </tbody>
+            </table>
+            <br>
+        {% endfor %}
+    </form>
 {% endblock %}
