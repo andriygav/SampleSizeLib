@@ -47,6 +47,7 @@ class APVCEstimator(SampleSizeEstimator):
     def __init__(self, statmodel, **kwards):
         r"""Constructor method
         """
+        super().__init__()
         self.statmodel = statmodel
 
         self.averaging = int(kwards.pop('averaging', 100))
@@ -177,10 +178,11 @@ class APVCEstimator(SampleSizeEstimator):
         else:
             iterator = subset_sizes
 
-        for m in iterator:
+        for i, m in enumerate(iterator):
             list_of_answers.append(
                 np.asarray(
                     list(mapping(self._score_subsample, m*points_one))))
+            self._set_status(100.*(i+1)/len(subset_sizes))
 
         if self.multiprocess:
             pool.close()
@@ -229,6 +231,7 @@ class ACCEstimator(SampleSizeEstimator):
     def __init__(self, statmodel, **kwards):
         r"""Constructor method
         """
+        super().__init__()
         self.statmodel = statmodel
 
         self.averaging = int(kwards.pop('averaging', 100))
@@ -368,10 +371,11 @@ class ACCEstimator(SampleSizeEstimator):
         else:
             iterator = subset_sizes
 
-        for m in iterator:
+        for i, m in enumerate(iterator):
             list_of_answers.append(
                 np.asarray(
                     list(mapping(self._score_subsample, m*points_one))))
+            self._set_status(100.*(i+1)/len(subset_sizes))
 
         if self.multiprocess:
             pool.close()
@@ -420,6 +424,7 @@ class ALCEstimator(SampleSizeEstimator):
     def __init__(self, statmodel, **kwards):
         r"""Constructor method
         """
+        super().__init__()
         self.statmodel = statmodel
 
         self.averaging = int(kwards.pop('averaging', 100))
@@ -560,10 +565,11 @@ class ALCEstimator(SampleSizeEstimator):
         else:
             iterator = subset_sizes
 
-        for m in iterator:
+        for i, m in enumerate(iterator):
             list_of_answers.append(
                 np.asarray(
                     list(mapping(self._score_subsample, m*points_one))))
+            self._set_status(100.*(i+1)/len(subset_sizes))
 
         if self.multiprocess:
             pool.close()
@@ -610,6 +616,7 @@ class MaxUtilityEstimator(SampleSizeEstimator):
     def __init__(self, statmodel, **kwards):
         r"""Constructor method
         """
+        super().__init__()
         self.statmodel = statmodel
 
         self.averaging = int(kwards.pop('averaging', 100))
@@ -750,10 +757,11 @@ class MaxUtilityEstimator(SampleSizeEstimator):
         else:
             iterator = subset_sizes
 
-        for m in iterator:
+        for i, m in enumerate(iterator):
             list_of_answers.append(
                 np.asarray(
                     list(mapping(self._score_subsample, m*points_one))))
+            self._set_status(100.*(i+1)/len(subset_sizes))
 
         if self.multiprocess:
             pool.close()
@@ -796,6 +804,7 @@ class KLEstimator(SampleSizeEstimator):
     def __init__(self, statmodel, **kwards):
         r"""Constructor method
         """
+        super().__init__()
         self.statmodel = statmodel
 
         self.averaging = int(kwards.pop('averaging', 5))
@@ -958,10 +967,11 @@ class KLEstimator(SampleSizeEstimator):
         else:
             iterator = subset_sizes
 
-        for m in iterator:
+        for i, m in enumerate(iterator):
             list_of_answers.append(
                 np.asarray(
                     list(mapping(self._score_subsample, m*points_one))))
+            self._set_status(100.*(i+1)/len(subset_sizes))
 
         if self.multiprocess:
             pool.close()

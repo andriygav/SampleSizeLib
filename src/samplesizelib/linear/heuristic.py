@@ -47,6 +47,7 @@ class CrossValidationEstimator(SampleSizeEstimator):
     def __init__(self, statmodel, **kwards):
         r"""Constructor method
         """
+        super().__init__()
         self.statmodel = statmodel
 
         self.averaging = int(kwards.pop('averaging', 100))
@@ -183,10 +184,11 @@ class CrossValidationEstimator(SampleSizeEstimator):
         else:
             iterator = subset_sizes
 
-        for m in iterator:
+        for i, m in enumerate(iterator):
             list_of_answers.append(
                 np.asarray(
                     list(mapping(self._score_subsample, m*points_one))))
+            self._set_status(100.*(i+1)/len(subset_sizes))
 
         if self.multiprocess:
             pool.close()
@@ -234,6 +236,7 @@ class BootstrapEstimator(SampleSizeEstimator):
     def __init__(self, statmodel, **kwards):
         r"""Constructor method
         """
+        super().__init__()
         self.statmodel = statmodel
 
         self.averaging = int(kwards.pop('averaging', 100))
@@ -370,10 +373,11 @@ class BootstrapEstimator(SampleSizeEstimator):
         else:
             iterator = subset_sizes
 
-        for m in iterator:
+        for i, m in enumerate(iterator):
             list_of_answers.append(
                 np.asarray(
                     list(mapping(self._score_subsample, m*points_one))))
+            self._set_status(100.*(i+1)/len(subset_sizes))
 
         if self.multiprocess:
             pool.close()
@@ -416,6 +420,7 @@ class LogisticRegressionEstimator(SampleSizeEstimator):
     def __init__(self, statmodel, **kwards):
         r"""Constructor method
         """
+        super().__init__()
         self.statmodel = statmodel
 
         self.ind = int(kwards.pop('ind', 0))

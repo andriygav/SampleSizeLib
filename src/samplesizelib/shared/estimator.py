@@ -14,7 +14,24 @@ class SampleSizeEstimator(object):
     def __init__(self):
         r"""Constructor method
         """
-        pass
+        self._percentage_of_completion_status = 0.
+
+    def status(self):
+        r"""
+        Returns the percentage of completion.
+        
+        :return: percentage of completion.
+        :rtype: float
+        """
+        return self._percentage_of_completion_status
+
+    def _set_status(self, new_percentage):
+        r"""
+        change percentage of completion status
+        """
+        new_percentage = float(new_percentage)
+        if 0 <= new_percentage <= 100:
+            self._percentage_of_completion_status = new_percentage
 
     def __call__(self, features, target):
         r"""

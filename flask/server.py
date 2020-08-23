@@ -4,6 +4,7 @@ from flask import render_template, Flask, request, jsonify, Response
 from threading import Thread
 
 import tempfile
+import time
 import json
 import re
 import os
@@ -57,6 +58,9 @@ def result(id):
     elif model.result is None:
         status = 'Result not ready, please wait.'
         tables = None
+    elif model.status is not None:
+        status = model.status
+        tables = None
     else:
         tabledict = dict()
         for key in model.result:
@@ -70,30 +74,38 @@ def result(id):
 
 @app.route('/progress/<int:id>')
 def progress(id):
-    model = shed.get_job(id)
-    if model is None:
+    def generate():
         response = dict()
-        response['persentage'] = 0
+        response['persentage'] = 0.
         response['progress'] = dict()
+        status = None
+        while response['persentage'] < 100 and status is None:
+            model = shed.get_job(id)
+            if model is None:
+                return 'data:{}\n\n'.format(json.dumps(response))
+            elif model.progress is None:
+                return 'data:{}\n\n'.format(json.dumps(response))
+            else:
+                status = model.status
+                response['persentage'] = model.percentage()
+                for key in model.progress:
+                    if key not in response['progress']:
+                        response['progress'][key] = dict()
+                    response['progress'][key]['progress'] = 0.
+                    response['progress'][key]['status'] = 'none'
+                    response['progress'][key]['m*'] = 'none'
+                    
+                    response['progress'][key]['status'] = model.progress[key]['status']
+                    response['progress'][key]['progress'] = int(model.models[key].status())
 
-    elif model.result is None:
-        response = dict()
-        response['persentage'] = 0
-        response['progress'] = dict()
-    else:
-        response = dict()
-        response['persentage'] = 100*len(list(model.progress.keys()))/len(list(model.models.keys()))
-        response['progress'] = dict()
-        for key in model.models:
-            response['progress'][key] = dict()
-            response['progress'][key]['status'] = 'none'
-            response['progress'][key]['m*'] = 'none'
-            if key in model.progress:
-                response['progress'][key]['status'] = model.progress[key]['status']
-                response['progress'][key]['m*'] = int(model.progress[key]['result']['m*'])
+                    if 'result' in model.progress[key]:
+                        response['progress'][key]['m*'] = int(model.progress[key]['result']['m*'])
 
-    text = 'data:{}\n\n'.format(json.dumps(response))
-    return Response(text, mimetype= 'text/event-stream')
+            text = 'data:{}\n\n'.format(json.dumps(response))
+            yield text
+            time.sleep(1)
+
+    return Response(generate(), mimetype= 'text/event-stream')
 
 @app.route('/checker', methods = ['GET', 'POST'])
 def checker():
@@ -154,9 +166,10 @@ def checker():
 
             for key in job.progress:
                 tabledict[key] = dict()
-                info = ['status', 'm*']
+                info = ['progress', 'status', 'm*']
                 for item in info:
                     tabledict[key][item] = 'none'
+                tabledict[key]['progress'] = 0
 
             status = None
         else:

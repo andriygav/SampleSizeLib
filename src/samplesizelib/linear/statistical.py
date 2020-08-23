@@ -39,6 +39,7 @@ class LagrangeEstimator(SampleSizeEstimator):
     def __init__(self, statmodel, **kwards):
         r"""Constructor method
         """
+        super().__init__()
         self.statmodel = statmodel
 
         self.ind_u = kwards.pop('ind_u', None)
@@ -167,6 +168,9 @@ class LagrangeEstimator(SampleSizeEstimator):
         gamma = self._get_gamma(ind_u, self.alpha, self.beta)
         
         m_star = np.ceil(gamma/gamma_0).astype(int)
+
+        self._set_status(100.)
+
         return {'m*': m_star}
 
 class LikelihoodRatioEstimator(SampleSizeEstimator):
@@ -188,6 +192,7 @@ class LikelihoodRatioEstimator(SampleSizeEstimator):
     def __init__(self, statmodel, **kwards):
         r"""Constructor method
         """
+        super().__init__()
         self.statmodel = statmodel
 
         self.ind_u = kwards.pop('ind_u', None)
@@ -304,6 +309,7 @@ class LikelihoodRatioEstimator(SampleSizeEstimator):
         gamma_star = self._get_gamma(ind_u, self.alpha, self.beta)
 
         m_star = np.ceil(gamma_star/delta_star).astype(int)
+        self._set_status(100.)
         return {'m*': m_star}
 
 class WaldEstimator(SampleSizeEstimator):
@@ -325,6 +331,7 @@ class WaldEstimator(SampleSizeEstimator):
     def __init__(self, statmodel, **kwards):
         r"""Constructor method
         """
+        super().__init__()
         self.statmodel = statmodel
 
         self.ind_u = kwards.pop('ind_u', None)
@@ -475,5 +482,7 @@ class WaldEstimator(SampleSizeEstimator):
             alpha_star = self.alpha
         gamma_star = self._get_gamma(ind_u, alpha_star, self.beta)
         m_star = np.ceil(gamma_star/delta).astype(int)
+
+        self._set_status(100.)
         return {'m*':m_star}
 

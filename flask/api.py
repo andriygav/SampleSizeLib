@@ -50,23 +50,23 @@ def get_config():
                                'alpha': 0.05, 
                                'beta': 0.05}
 
-    config['BootstrapEstimator'] = {'averaging': 100,
+    config['BootstrapEstimator'] = {'averaging': 10,
                                     'epsilon': 0.5}
-    config['CrossValidationEstimator'] = {'averaging': 100,
+    config['CrossValidationEstimator'] = {'averaging': 10,
                                           'test_size': 0.5, 
                                           'epsilon': 0.05}
 
-    config['APVCEstimator'] = {'averaging': 100,
+    config['APVCEstimator'] = {'averaging': 10,
                                'epsilon': 0.5}
-    config['ACCEstimator'] = {'averaging': 100,
+    config['ACCEstimator'] = {'averaging': 10,
                               'length': 0.25,
                               'alpha': 0.05}
-    config['ALCEstimator'] = {'averaging': 100,
+    config['ALCEstimator'] = {'averaging': 10,
                               'length': 0.5,
                               'alpha': 0.05}
-    config['MaxUtilityEstimator'] = {'averaging': 100,
+    config['MaxUtilityEstimator'] = {'averaging': 10,
                                      'c': 0.5}
-    config['KLEstimator'] = {'averaging': 100,
+    config['KLEstimator'] = {'averaging': 5,
                              'epsilon': 0.5}
     return config
 
@@ -81,7 +81,10 @@ class worker(object):
 
         self.models = dict()
         self.status = None
-        self.result = None
+        self.result = dict()
+
+        self._percentage_of_completion_status = 0.
+
         for key in config:
             try:
                 self.models[key] = NAME_TO_MODEL[key](statmodel, **config[key])
@@ -92,19 +95,40 @@ class worker(object):
                 self.status = 'Model "{}" initialise error: {}'.format(key, str(e))
                 return
 
-    def forward(self):
-        result = dict()
+    def percentage(self):
+        r"""
+        Returns the percentage of completion.
+        
+        :return: percentage of completion.
+        :rtype: float
+        """
+        return self._percentage_of_completion_status
 
-        for key in self.models:
+    def _set_percentage(self, new_percentage):
+        r"""
+        change percentage of completion status
+        """
+        new_percentage = float(new_percentage)
+        if 0 <= new_percentage <= 100:
+            self._percentage_of_completion_status = new_percentage
+
+
+    def forward(self):
+        for i, key in enumerate(self.models):
             self.progress[key] = dict()
             self.progress[key]['status'] = 'start'
-            result[key] = self.models[key](self.X, self.y)
+            try:
+                self.result[key] = self.models[key](self.X, self.y)
+            except Exception as e:
+                self.status = 'Model "{}" running error: {}'.format(key, str(e))
+                self.progress[key]['status'] = 'error'
+                return self.result
             self.progress[key]['status'] = 'end'
-            self.progress[key]['result'] = result[key]
+            
+            self.progress[key]['result'] = self.result[key]
+            self._set_percentage(100.*(i+1)/len(self.models))
 
-        self.result = result
-
-        return result
+        return self.result
 
 class scheduler(object):
     def __init__(self):
