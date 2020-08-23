@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*- 
-from flask import render_template, Flask, request, jsonify
+from flask import render_template, Flask, request, jsonify, Response
+
+from threading import Thread
 
 import tempfile
+import json
 import re
 import os
 
@@ -10,10 +13,12 @@ from time import gmtime, strftime
 import pandas as pd
 import numpy as np
 
-from api import get_config, NAME_TO_MODEL, NAME_TO_STATMODEL
+from api import worker, scheduler, get_config, NAME_TO_MODEL, NAME_TO_STATMODEL
 
 
 app = Flask(__name__)
+
+shed = scheduler()
 
 @app.route('/')
 @app.route('/check')
@@ -21,10 +26,81 @@ def check():
     config = get_config()
     return render_template('check.html', config=config)
 
+@app.route('/get_result/<int:id>')
+def get_result(id):
+    model = shed.get_job(id)
+    if model is None:
+        response = jsonify({})
+        response.status_code = 400
+
+    elif model.result is None:
+        response = jsonify({})
+        response.status_code = 400
+    else:
+        tabledict = dict()
+        for key in model.result:
+            tabledict[key] = {'m*': model.result[key]['m*']}
+
+        dataframe = pd.DataFrame(tabledict)
+        table = dataframe.to_html(classes='data')
+
+        response = jsonify(table=table)
+        response.status_code = 200
+    return response
+
+@app.route('/result/<int:id>')
+def result(id):
+    model = shed.get_job(id)
+    if model is None:
+        status = 'Id not recognise.'
+        tables = None
+    elif model.result is None:
+        status = 'Result not ready, please wait.'
+        tables = None
+    else:
+        tabledict = dict()
+        for key in model.result:
+            tabledict[key] = {'m*': model.result[key]['m*']}
+
+        dataframe = pd.DataFrame(tabledict).T
+        tables = [dataframe.to_html(classes='data')]
+        status = None
+
+    return render_template('result.html', status=status, tables=tables, _id=id)
+
+@app.route('/progress/<int:id>')
+def progress(id):
+    model = shed.get_job(id)
+    if model is None:
+        response = dict()
+        response['persentage'] = 0
+        response['progress'] = dict()
+
+    elif model.result is None:
+        response = dict()
+        response['persentage'] = 0
+        response['progress'] = dict()
+    else:
+        response = dict()
+        response['persentage'] = 100*len(list(model.progress.keys()))/len(list(model.models.keys()))
+        response['progress'] = dict()
+        for key in model.models:
+            response['progress'][key] = dict()
+            response['progress'][key]['status'] = 'none'
+            response['progress'][key]['m*'] = 'none'
+            if key in model.progress:
+                response['progress'][key]['status'] = model.progress[key]['status']
+                response['progress'][key]['m*'] = int(model.progress[key]['result']['m*'])
+
+    text = 'data:{}\n\n'.format(json.dumps(response))
+    return Response(text, mimetype= 'text/event-stream')
+
 @app.route('/checker', methods = ['GET', 'POST'])
 def checker():
     status = 'Dataset is not downloaded.'
-    tables = None
+    _id = None
+    tabledict = dict()
+    info = []
     
     if request.method == 'POST':
         statmodel = NAME_TO_STATMODEL.get(request.form.get('statmodel', None), None)
@@ -41,8 +117,6 @@ def checker():
                     default_config[key][param] = request.form.get('config[{}][{}]'.format(key, param), None)
                     if default_config[key][param]:
                         config[key][param] = float(default_config[key][param])
-
-        print(config)
 
         status = 'Dataset is loaded but not processed, please try again.'
 
@@ -69,26 +143,20 @@ def checker():
                 del dataset['y']
                 X = dataset.to_numpy()
 
-            models = dict()
-            for key in config:
-                try:
-                    models[key] = NAME_TO_MODEL[key](statmodel, **config[key])
-                except ValueError as e:
-                    status = 'Model "{}" initialise error: {}'.format(key, str(e))
-                    return render_template('checker.html', status=status)
+            job = worker(statmodel, config, X, y)
+            if job.status is not None:
+                return render_template('checker.html', status=job.status)
+            _id = shed.add_job(job)
 
+            thread = Thread(target=job.forward)
+            thread.daemon = True
+            thread.start()
 
-            result = dict()
-
-            for key in models:
-                result[key] = models[key](X, y)
-
-            tabledict = dict()
-            for key in result:
-                tabledict[key] = {'m*': result[key]['m*']}
-
-            dataframe = pd.DataFrame(tabledict)
-            tables = [dataframe.to_html(classes='data')]
+            for key in job.progress:
+                tabledict[key] = dict()
+                info = ['status', 'm*']
+                for item in info:
+                    tabledict[key][item] = 'none'
 
             status = None
         else:
@@ -96,7 +164,7 @@ def checker():
             
         os.remove(filename)
 
-    return render_template('checker.html', status=status,  tables=tables)
+    return render_template('checker.html', status=status, tabledict=tabledict, info=info, _id=_id)
             
         
         

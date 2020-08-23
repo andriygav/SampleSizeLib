@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="home">
+        <h1>Sample Size Result</h1>
+    </div>
+    {% if status %}
+        <div class="home">
+            <h2>Error</h2>
+        </div>
+        {% autoescape false %}
+          {{status}}
+        {% endautoescape %}
+    {% else %}
+        <div class="home">
+        <h2>Brief review</h2>
+        </div>
+        {% if tables %}
+            {{ tables[0]|safe }}
+        {% endif %}
+    {% endif %}
+{% endblock %}
+

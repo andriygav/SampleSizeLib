@@ -16,8 +16,8 @@
         <input type = "submit"/>
         <br>
         <br>
-        {%for key in config%}
-            <table border="1" class="dataframe data">
+          <table border="1" class="dataframe data">
+            {%for key in config%}
               <thead>
                 <tr style="text-align: center;">
                   <th></th>
@@ -36,8 +36,11 @@
                   {% endfor %}
                 </tr>
               </tbody>
-            </table>
-            <br>
-        {% endfor %}
+              <tbody>
+                <tr style="text-align: center;">
+                </tr>
+              </tbody>
+            {% endfor %}
+          </table>
     </form>
 {% endblock %}

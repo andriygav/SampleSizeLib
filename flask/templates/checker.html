@@ -1,7 +1,20 @@
 {% extends "layout.html" %}
 {% block content %}
+    <script>
+    var source = new EventSource("/progress/{{_id}}");
+    source.onmessage = function(event) {
+        var data = JSON.parse(event.data)
+        document.getElementById('progress-bar-report').textContent = data['persentage']+'%'
+        for (var key in data['progress']) {
+            for (var item in data['progress'][key]){
+                document.getElementById(key+'['+item+']').textContent = data['progress'][key][item]
+            }
+        }
+    }
+    </script>
+
     <div class="home">
-        <h1>Sample Size Analysis Result</h1>
+        <h1>Sample Size Analysises</h1>
     </div>
     {% if status %}
         <div class="home">
@@ -10,13 +23,26 @@
         {% autoescape false %}
           {{status}}
         {% endautoescape %}
-    {% else %}
-        <div class="home">
-        <h2>Brief review</h2>
-        </div>
-        {% if tables %}
-            {{ tables[0]|safe }}
-        {% endif %}
+    {% endif %}
+    <a href="/result/{{_id}}">Report (<span id="progress-bar-report">0%</span>)</a>
+    <br>
+    {% if tabledict %}
+        <table border="1" class="dataframe data">
+            <thead>
+                <th>Model</th>
+                {% for key in info %}
+                    <th>{{key}}</th>
+                {% endfor %}
+            </thead>
+            {% for key in tabledict %}
+                <tbody>
+                    <td>{{key}}</td>
+                    {% for item in tabledict[key] %}
+                        <td id="{{key}}[{{item}}]">{{tabledict[key][item]}}</td>
+                    {% endfor %}
+                </tbody>
+            {% endfor %}
+        </table>
     {% endif %}
 {% endblock %}
 
