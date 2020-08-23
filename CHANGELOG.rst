@@ -4,11 +4,11 @@ Changelog
 
 Changes:
 
-v0.0.3 (future)
+v0.0.3 (stable)
   - add api
   - add flask usage
 
-v0.0.2 (stable)
+v0.0.2
   - add bayesian methods
   - add heuristic methods
   - add dataset type with subsample generator
