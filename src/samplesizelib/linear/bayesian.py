@@ -15,7 +15,6 @@ __docformat__ = 'restructuredtext'
 from multiprocessing import Pool
 
 import numpy as np
-from tqdm import tqdm
 import scipy.stats as sps
 from scipy.optimize import minimize_scalar
 
@@ -174,7 +173,7 @@ class APVCEstimator(SampleSizeEstimator):
             mapping = map
 
         if self.progressbar:
-            iterator = tqdm(subset_sizes)
+            iterator = self._progressbar(subset_sizes)
         else:
             iterator = subset_sizes
 
@@ -367,7 +366,7 @@ class ACCEstimator(SampleSizeEstimator):
             mapping = map
 
         if self.progressbar:
-            iterator = tqdm(subset_sizes)
+            iterator = self._progressbar(subset_sizes)
         else:
             iterator = subset_sizes
 
@@ -561,7 +560,7 @@ class ALCEstimator(SampleSizeEstimator):
             mapping = map
 
         if self.progressbar:
-            iterator = tqdm(subset_sizes)
+            iterator = self._progressbar(subset_sizes)
         else:
             iterator = subset_sizes
 
@@ -753,7 +752,7 @@ class MaxUtilityEstimator(SampleSizeEstimator):
             mapping = map
 
         if self.progressbar:
-            iterator = tqdm(subset_sizes)
+            iterator = self._progressbar(subset_sizes)
         else:
             iterator = subset_sizes
 
@@ -963,7 +962,7 @@ class KLEstimator(SampleSizeEstimator):
             mapping = map
 
         if self.progressbar:
-            iterator = tqdm(subset_sizes)
+            iterator = self._progressbar(subset_sizes)
         else:
             iterator = subset_sizes
 

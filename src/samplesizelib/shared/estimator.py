@@ -8,6 +8,8 @@ from __future__ import print_function
 
 __docformat__ = 'restructuredtext'
 
+from tqdm import tqdm
+
 class SampleSizeEstimator(object):
     r"""Base class for all sample size estimation models."""
 
@@ -32,6 +34,14 @@ class SampleSizeEstimator(object):
         new_percentage = float(new_percentage)
         if 0 <= new_percentage <= 100:
             self._percentage_of_completion_status = new_percentage
+
+    def _progressbar(self, iterable):
+        r"""
+        Init tqdm progressbar
+        """
+        iterator = tqmd(iterable)
+        iterator.set_description_str(self.__class__.__name__)
+        return iterator
 
     def __call__(self, features, target):
         r"""

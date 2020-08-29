@@ -13,7 +13,6 @@ __docformat__ = 'restructuredtext'
 from multiprocessing import Pool
 
 import numpy as np
-from tqdm import tqdm
 import scipy.stats as sps
 from sklearn.metrics import roc_curve
 
@@ -180,7 +179,7 @@ class CrossValidationEstimator(SampleSizeEstimator):
             mapping = map
 
         if self.progressbar:
-            iterator = tqdm(subset_sizes)
+            iterator = self._progressbar(subset_sizes)
         else:
             iterator = subset_sizes
 
@@ -369,7 +368,7 @@ class BootstrapEstimator(SampleSizeEstimator):
             mapping = map
 
         if self.progressbar:
-            iterator = tqdm(subset_sizes)
+            iterator = self._progressbar(subset_sizes)
         else:
             iterator = subset_sizes
 
