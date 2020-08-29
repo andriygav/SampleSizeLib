@@ -14,7 +14,7 @@ from time import gmtime, strftime
 import pandas as pd
 import numpy as np
 
-from api import worker, scheduler, get_config, NAME_TO_MODEL, NAME_TO_STATMODEL
+from api import worker, scheduler, get_config, scale, NAME_TO_MODEL, NAME_TO_STATMODEL
 
 
 app = Flask(__name__)
@@ -116,6 +116,7 @@ def checker():
     
     if request.method == 'POST':
         statmodel = NAME_TO_STATMODEL.get(request.form.get('statmodel', None), None)
+        preprocess_type = request.form.get('preprocess', None)
         if statmodel is None:
             status = 'Linear model is not recognise: {}'.format(statmodel)
             return render_template('checker.html', status=status)
@@ -148,12 +149,21 @@ def checker():
             status = 'Dataset is received but not processed, please try again.'
 
             dataset = pd.read_csv(filename)
-            if 'y' not in dataset:
-                status = 'Target column "y" is not specified'
+            if 'y' not in dataset and 'answer' not in dataset:
+                status = 'Target column "y" or column "answer" is not specified'
+                return render_template('checker.html', status=status)
             else:
-                y = dataset['y'].to_numpy()
-                del dataset['y']
+                target_column = 'y'
+                if 'answer' in dataset:
+                    target_column = 'answer'
+                y = dataset[target_column].to_numpy()
+                del dataset[target_column]
                 X = dataset.to_numpy()
+
+                if preprocess_type == 'scale':
+                    X = scale(X)
+
+                X = np.hstack((X, np.ones([len(X), 1])))
 
             job = worker(statmodel, config, X, y)
             if job.status is not None:

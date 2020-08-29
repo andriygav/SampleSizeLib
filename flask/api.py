@@ -8,6 +8,7 @@ from __future__ import print_function
 __docformat__ = 'restructuredtext'
 
 import numpy as np
+from sklearn.preprocessing import scale
 
 from samplesizelib.linear.statistical import LagrangeEstimator
 from samplesizelib.linear.statistical import LikelihoodRatioEstimator

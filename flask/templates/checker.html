@@ -23,26 +23,27 @@
         {% autoescape false %}
           {{status}}
         {% endautoescape %}
-    {% endif %}
-    <a href="/result/{{_id}}">Report (<span id="progress-bar-report">0%</span>)</a>
-    <br>
-    {% if tabledict %}
-        <table border="1" class="dataframe data">
-            <thead>
-                <th>Model</th>
-                {% for key in info %}
-                    <th>{{key}}</th>
-                {% endfor %}
-            </thead>
-            {% for key in tabledict %}
-                <tbody>
-                    <td>{{key}}</td>
-                    {% for item in tabledict[key] %}
-                        <td id="{{key}}[{{item}}]">{{tabledict[key][item]}}</td>
+    {% else %}
+        <a href="/result/{{_id}}">Report (<span id="progress-bar-report">0%</span>)</a>
+        <br>
+        {% if tabledict %}
+            <table border="1" class="dataframe data">
+                <thead>
+                    <th>Model</th>
+                    {% for key in info %}
+                        <th>{{key}}</th>
                     {% endfor %}
-                </tbody>
-            {% endfor %}
-        </table>
+                </thead>
+                {% for key in tabledict %}
+                    <tbody>
+                        <td>{{key}}</td>
+                        {% for item in tabledict[key] %}
+                            <td id="{{key}}[{{item}}]">{{tabledict[key][item]}}</td>
+                        {% endfor %}
+                    </tbody>
+                {% endfor %}
+            </table>
+        {% endif %}
     {% endif %}
 {% endblock %}
 
