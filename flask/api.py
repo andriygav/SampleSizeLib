@@ -41,15 +41,15 @@ NAME_TO_STATMODEL = {'LogisticModel': LogisticModel,
 
 def get_config():
     config = dict()
-    config['LagrangeEstimator'] = {'epsilon': 0.3, 
+    config['LagrangeEstimator'] = {'epsilon': 0.2, 
                                    'alpha': 0.05, 
-                                   'beta': 0.05}
-    config['LikelihoodRatioEstimator'] = {'epsilon': 0.3, 
+                                   'beta': 0.2}
+    config['LikelihoodRatioEstimator'] = {'epsilon': 0.2, 
                                           'alpha': 0.05, 
-                                          'beta': 0.05}
-    config['WaldEstimator'] = {'epsilon': 0.3, 
+                                          'beta': 0.2}
+    config['WaldEstimator'] = {'epsilon': 0.2, 
                                'alpha': 0.05, 
-                               'beta': 0.05}
+                               'beta': 0.2}
 
     config['BootstrapEstimator'] = {'averaging': 10,
                                     'epsilon': 0.5}
@@ -66,7 +66,7 @@ def get_config():
                               'length': 0.5,
                               'alpha': 0.05}
     config['MaxUtilityEstimator'] = {'averaging': 10,
-                                     'c': 0.5}
+                                     'c': 0.005}
     config['KLEstimator'] = {'averaging': 5,
                              'epsilon': 0.5}
     return config
