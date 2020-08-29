@@ -162,6 +162,8 @@ def checker():
 
                 if preprocess_type == 'scale':
                     X = scale(X)
+                    if statmodel == statmodel = NAME_TO_STATMODEL.get('RegressionModel', None):
+                    	y = scale(y)
 
                 X = np.hstack((X, np.ones([len(X), 1])))
 
