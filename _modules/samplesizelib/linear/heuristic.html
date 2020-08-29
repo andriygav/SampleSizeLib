@@ -179,7 +179,6 @@
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="kn">import</span> <span class="n">Pool</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">import</span> <span class="nn">scipy.stats</span> <span class="k">as</span> <span class="nn">sps</span>
 <span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_curve</span>
 
@@ -346,7 +345,7 @@
             <span class="n">mapping</span> <span class="o">=</span> <span class="nb">map</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">progressbar</span><span class="p">:</span>
-            <span class="n">iterator</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">subset_sizes</span><span class="p">)</span>
+            <span class="n">iterator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progressbar</span><span class="p">(</span><span class="n">subset_sizes</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">iterator</span> <span class="o">=</span> <span class="n">subset_sizes</span>
 
@@ -535,7 +534,7 @@
             <span class="n">mapping</span> <span class="o">=</span> <span class="nb">map</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">progressbar</span><span class="p">:</span>
-            <span class="n">iterator</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">subset_sizes</span><span class="p">)</span>
+            <span class="n">iterator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_progressbar</span><span class="p">(</span><span class="n">subset_sizes</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">iterator</span> <span class="o">=</span> <span class="n">subset_sizes</span>
 
