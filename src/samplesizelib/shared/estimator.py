@@ -39,7 +39,7 @@ class SampleSizeEstimator(object):
         r"""
         Init tqdm progressbar
         """
-        iterator = tqmd(iterable)
+        iterator = tqdm(iterable)
         iterator.set_description_str(self.__class__.__name__)
         return iterator
 
