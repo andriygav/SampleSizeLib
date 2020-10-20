@@ -4,7 +4,10 @@ Changelog
 
 Changes:
 
-v0.0.3 (stable)
+v0.0.4 (stable)
+  - add compability with 3.* python
+
+v0.0.3
   - add api
   - add flask usage
 
