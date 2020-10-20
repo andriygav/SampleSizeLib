@@ -25,6 +25,5 @@ setup(
 
     # options
     packages=find_packages(),
-    python_requires='==3.6.*',
     install_requires=requirements,
 )
